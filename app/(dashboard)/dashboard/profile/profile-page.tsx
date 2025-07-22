@@ -2,11 +2,28 @@
 
 import type React from "react"
 import { useState } from "react"
-import { ArrowLeft, User, Mail, Phone, MapPin, Camera, Save, Edit, Eye, EyeOff } from "lucide-react"
+import {
+  ArrowLeft,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Camera,
+  Save,
+  Edit,
+  Eye,
+  EyeOff,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useRouter } from "next/navigation"
@@ -54,7 +71,10 @@ export default function ProfilePage() {
     setProfile((prev) => ({ ...prev, [field]: value }))
   }
 
-  const handlePasswordChange = (field: keyof typeof passwordData, value: string) => {
+  const handlePasswordChange = (
+    field: keyof typeof passwordData,
+    value: string
+  ) => {
     setPasswordData((prev) => ({ ...prev, [field]: value }))
   }
 
@@ -119,14 +139,20 @@ export default function ProfilePage() {
       <header className="bg-white border-b border-slate-200 px-6 py-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" onClick={() => router.push("/dashboard")} className="flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              onClick={() => router.push("/dashboard")}
+              className="flex items-center space-x-2"
+            >
               <ArrowLeft className="h-4 w-4" />
               <span>Back to Dashboard</span>
             </Button>
             <div className="h-6 w-px bg-slate-300" />
             <div className="flex items-center space-x-2">
               <User className="h-6 w-6 text-[#4F46E5]" />
-              <h1 className="text-xl font-semibold text-slate-900">Profile Settings</h1>
+              <h1 className="text-xl font-semibold text-slate-900">
+                Profile Settings
+              </h1>
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -135,13 +161,19 @@ export default function ProfilePage() {
                 <Button variant="outline" onClick={handleEditToggle}>
                   Cancel
                 </Button>
-                <Button onClick={handleSaveProfile} className="bg-[#4F46E5] hover:bg-[#4338CA] text-white">
+                <Button
+                  onClick={handleSaveProfile}
+                  className="bg-[#4F46E5] hover:bg-[#4338CA] text-white"
+                >
                   <Save className="h-4 w-4 mr-2" />
                   Save Changes
                 </Button>
               </>
             ) : (
-              <Button onClick={handleEditToggle} className="bg-[#4F46E5] hover:bg-[#4338CA] text-white">
+              <Button
+                onClick={handleEditToggle}
+                className="bg-[#4F46E5] hover:bg-[#4338CA] text-white"
+              >
                 <Edit className="h-4 w-4 mr-2" />
                 Edit Profile
               </Button>
@@ -164,13 +196,18 @@ export default function ProfilePage() {
             <Card>
               <CardHeader>
                 <CardTitle>Profile Picture</CardTitle>
-                <CardDescription>Update your profile picture and personal information.</CardDescription>
+                <CardDescription>
+                  Update your profile picture and personal information.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center space-x-6">
                   <div className="relative">
                     <Avatar className="h-24 w-24">
-                      <AvatarImage src={profile.avatar || "/placeholder.svg"} alt="Profile picture" />
+                      <AvatarImage
+                        src={profile.avatar || "/placeholder.svg"}
+                        alt="Profile picture"
+                      />
                       <AvatarFallback className="text-lg bg-[#4F46E5]/10 text-[#4F46E5]">
                         {profile.firstName[0]}
                         {profile.lastName[0]}
@@ -192,7 +229,9 @@ export default function ProfilePage() {
                     <h3 className="text-lg font-semibold text-slate-900">
                       {profile.firstName} {profile.lastName}
                     </h3>
-                    <p className="text-sm text-slate-500 mt-1">{profile.email}</p>
+                    <p className="text-sm text-slate-500 mt-1">
+                      {profile.email}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -202,7 +241,9 @@ export default function ProfilePage() {
             <Card>
               <CardHeader>
                 <CardTitle>Personal Information</CardTitle>
-                <CardDescription>Your personal details and contact information.</CardDescription>
+                <CardDescription>
+                  Your personal details and contact information.
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -211,7 +252,9 @@ export default function ProfilePage() {
                     <Input
                       id="firstName"
                       value={profile.firstName}
-                      onChange={(e) => handleProfileChange("firstName", e.target.value)}
+                      onChange={(e) =>
+                        handleProfileChange("firstName", e.target.value)
+                      }
                       disabled={!isEditing}
                       className="h-11"
                     />
@@ -221,7 +264,9 @@ export default function ProfilePage() {
                     <Input
                       id="lastName"
                       value={profile.lastName}
-                      onChange={(e) => handleProfileChange("lastName", e.target.value)}
+                      onChange={(e) =>
+                        handleProfileChange("lastName", e.target.value)
+                      }
                       disabled={!isEditing}
                       className="h-11"
                     />
@@ -237,7 +282,9 @@ export default function ProfilePage() {
                         id="email"
                         type="email"
                         value={profile.email}
-                        onChange={(e) => handleProfileChange("email", e.target.value)}
+                        onChange={(e) =>
+                          handleProfileChange("email", e.target.value)
+                        }
                         disabled={!isEditing}
                         className="h-11 pl-10"
                       />
@@ -251,7 +298,9 @@ export default function ProfilePage() {
                         id="phone"
                         type="tel"
                         value={profile.phone}
-                        onChange={(e) => handleProfileChange("phone", e.target.value)}
+                        onChange={(e) =>
+                          handleProfileChange("phone", e.target.value)
+                        }
                         disabled={!isEditing}
                         className="h-11 pl-10"
                       />
@@ -265,7 +314,9 @@ export default function ProfilePage() {
             <Card>
               <CardHeader>
                 <CardTitle>Address Information</CardTitle>
-                <CardDescription>Your business or home address.</CardDescription>
+                <CardDescription>
+                  Your business or home address.
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -275,7 +326,9 @@ export default function ProfilePage() {
                     <Input
                       id="address"
                       value={profile.address}
-                      onChange={(e) => handleProfileChange("address", e.target.value)}
+                      onChange={(e) =>
+                        handleProfileChange("address", e.target.value)
+                      }
                       disabled={!isEditing}
                       className="h-11 pl-10"
                     />
@@ -288,7 +341,9 @@ export default function ProfilePage() {
                     <Input
                       id="city"
                       value={profile.city}
-                      onChange={(e) => handleProfileChange("city", e.target.value)}
+                      onChange={(e) =>
+                        handleProfileChange("city", e.target.value)
+                      }
                       disabled={!isEditing}
                       className="h-11"
                     />
@@ -298,7 +353,9 @@ export default function ProfilePage() {
                     <Input
                       id="state"
                       value={profile.state}
-                      onChange={(e) => handleProfileChange("state", e.target.value)}
+                      onChange={(e) =>
+                        handleProfileChange("state", e.target.value)
+                      }
                       disabled={!isEditing}
                       className="h-11"
                     />
@@ -308,7 +365,9 @@ export default function ProfilePage() {
                     <Input
                       id="zipCode"
                       value={profile.zipCode}
-                      onChange={(e) => handleProfileChange("zipCode", e.target.value)}
+                      onChange={(e) =>
+                        handleProfileChange("zipCode", e.target.value)
+                      }
                       disabled={!isEditing}
                       className="h-11"
                     />
@@ -323,7 +382,9 @@ export default function ProfilePage() {
             <Card>
               <CardHeader>
                 <CardTitle>Change Password</CardTitle>
-                <CardDescription>Update your password to keep your account secure.</CardDescription>
+                <CardDescription>
+                  Update your password to keep your account secure.
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -333,7 +394,9 @@ export default function ProfilePage() {
                       id="currentPassword"
                       type={showCurrentPassword ? "text" : "password"}
                       value={passwordData.currentPassword}
-                      onChange={(e) => handlePasswordChange("currentPassword", e.target.value)}
+                      onChange={(e) =>
+                        handlePasswordChange("currentPassword", e.target.value)
+                      }
                       className="h-11 pr-10"
                     />
                     <Button
@@ -341,7 +404,9 @@ export default function ProfilePage() {
                       variant="ghost"
                       size="sm"
                       className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                      onClick={() =>
+                        setShowCurrentPassword(!showCurrentPassword)
+                      }
                     >
                       {showCurrentPassword ? (
                         <EyeOff className="h-4 w-4 text-slate-500" />
@@ -359,7 +424,9 @@ export default function ProfilePage() {
                       id="newPassword"
                       type={showNewPassword ? "text" : "password"}
                       value={passwordData.newPassword}
-                      onChange={(e) => handlePasswordChange("newPassword", e.target.value)}
+                      onChange={(e) =>
+                        handlePasswordChange("newPassword", e.target.value)
+                      }
                       className="h-11 pr-10"
                     />
                     <Button
@@ -377,7 +444,8 @@ export default function ProfilePage() {
                     </Button>
                   </div>
                   <p className="text-xs text-slate-500">
-                    Must be at least 8 characters with uppercase, lowercase, and numbers
+                    Must be at least 8 characters with uppercase, lowercase, and
+                    numbers
                   </p>
                 </div>
 
@@ -388,7 +456,9 @@ export default function ProfilePage() {
                       id="confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
                       value={passwordData.confirmPassword}
-                      onChange={(e) => handlePasswordChange("confirmPassword", e.target.value)}
+                      onChange={(e) =>
+                        handlePasswordChange("confirmPassword", e.target.value)
+                      }
                       className="h-11 pr-10"
                     />
                     <Button
@@ -396,7 +466,9 @@ export default function ProfilePage() {
                       variant="ghost"
                       size="sm"
                       className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                     >
                       {showConfirmPassword ? (
                         <EyeOff className="h-4 w-4 text-slate-500" />
@@ -407,7 +479,10 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <Button onClick={handleChangePassword} className="bg-[#4F46E5] hover:bg-[#4338CA] text-white">
+                <Button
+                  onClick={handleChangePassword}
+                  className="bg-[#4F46E5] hover:bg-[#4338CA] text-white"
+                >
                   Change Password
                 </Button>
               </CardContent>

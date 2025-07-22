@@ -1,10 +1,16 @@
 "use client"
-
-import { useState, useEffect } from "react"
-import { ArrowLeft, Building2, Download, Share, FileText } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { ArrowLeft, Building2, Download, FileText, Share } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 
 interface PropertyData {
   id: string
@@ -27,7 +33,9 @@ interface PropertyReportPageProps {
   propertyId: string
 }
 
-export default function PropertyReportPage({ propertyId }: PropertyReportPageProps) {
+export default function PropertyReportPage({
+  propertyId,
+}: PropertyReportPageProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
 
@@ -40,7 +48,7 @@ export default function PropertyReportPage({ propertyId }: PropertyReportPagePro
     averageRisk: 0,
   })
 
-  const [tenantRiskData, setTenantRiskData] = useState<TenantRiskData[]>([
+  const [tenantRiskData, _setTenantRiskData] = useState<TenantRiskData[]>([
     {
       id: "1",
       tenantName: "Sarah Johnson",
@@ -129,9 +137,9 @@ export default function PropertyReportPage({ propertyId }: PropertyReportPagePro
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#4F46E5] mx-auto mb-4" />
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-[#4F46E5]" />
           <p className="text-slate-600">Loading property report...</p>
         </div>
       </div>
@@ -141,26 +149,39 @@ export default function PropertyReportPage({ propertyId }: PropertyReportPagePro
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 px-6 py-4">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
+      <header className="border-b border-slate-200 bg-white px-6 py-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" onClick={() => router.push("/dashboard")} className="flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              onClick={() => router.push("/dashboard")}
+              className="flex items-center space-x-2"
+            >
               <ArrowLeft className="h-4 w-4" />
               <span>Back to Dashboard</span>
             </Button>
             <div className="h-6 w-px bg-slate-300" />
             <div className="flex items-center space-x-2">
               <Building2 className="h-6 w-6 text-[#4F46E5]" />
-              <h1 className="text-xl font-semibold text-slate-900">Property Report</h1>
+              <h1 className="text-xl font-semibold text-slate-900">
+                Property Report
+              </h1>
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <Button variant="outline" onClick={handleShareReport} className="bg-transparent">
-              <Share className="h-4 w-4 mr-2" />
+            <Button
+              variant="outline"
+              onClick={handleShareReport}
+              className="bg-transparent"
+            >
+              <Share className="mr-2 h-4 w-4" />
               Share
             </Button>
-            <Button onClick={handleDownloadReport} className="bg-[#4F46E5] hover:bg-[#4338CA] text-white">
-              <Download className="h-4 w-4 mr-2" />
+            <Button
+              onClick={handleDownloadReport}
+              className="bg-[#4F46E5] text-white hover:bg-[#4338CA]"
+            >
+              <Download className="mr-2 h-4 w-4" />
               Download PDF
             </Button>
           </div>
@@ -168,22 +189,32 @@ export default function PropertyReportPage({ propertyId }: PropertyReportPagePro
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      <main className="mx-auto max-w-7xl px-6 py-8">
         {/* Property Overview */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="text-2xl text-slate-900">{propertyData.name}</CardTitle>
-            <CardDescription className="text-lg">{propertyData.address}</CardDescription>
+            <CardTitle className="text-2xl text-slate-900">
+              {propertyData.name}
+            </CardTitle>
+            <CardDescription className="text-lg">
+              {propertyData.address}
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               <div className="text-center">
-                <div className="text-3xl font-bold text-slate-900">{propertyData.occupiedUnits}</div>
+                <div className="text-3xl font-bold text-slate-900">
+                  {propertyData.occupiedUnits}
+                </div>
                 <div className="text-sm text-slate-600">Occupied Units</div>
-                <div className="text-xs text-slate-500">of {propertyData.totalUnits} total</div>
+                <div className="text-xs text-slate-500">
+                  of {propertyData.totalUnits} total
+                </div>
               </div>
               <div className="text-center">
-                <div className={`text-3xl font-bold ${getRiskColor(propertyData.averageRisk)}`}>
+                <div
+                  className={`text-3xl font-bold ${getRiskColor(propertyData.averageRisk)}`}
+                >
                   {propertyData.averageRisk}%
                 </div>
                 <div className="text-sm text-slate-600">Average Risk</div>
@@ -191,7 +222,10 @@ export default function PropertyReportPage({ propertyId }: PropertyReportPagePro
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-slate-900">
-                  {Math.round((propertyData.occupiedUnits / propertyData.totalUnits) * 100)}%
+                  {Math.round(
+                    (propertyData.occupiedUnits / propertyData.totalUnits) * 100
+                  )}
+                  %
                 </div>
                 <div className="text-sm text-slate-600">Occupancy Rate</div>
                 <div className="text-xs text-slate-500">current occupancy</div>
@@ -204,12 +238,14 @@ export default function PropertyReportPage({ propertyId }: PropertyReportPagePro
         <Card className="shadow-lg">
           <CardContent className="p-0">
             {/* Header */}
-            <div className="bg-slate-700 text-white px-6 py-4">
-              <h2 className="text-xl font-semibold text-center">Tenant Risk Analysis Dashboard</h2>
+            <div className="bg-slate-700 px-6 py-4 text-white">
+              <h2 className="text-center text-xl font-semibold">
+                Tenant Risk Analysis Dashboard
+              </h2>
             </div>
 
             {/* Table Header */}
-            <div className="bg-slate-600 text-white px-6 py-3">
+            <div className="bg-slate-600 px-6 py-3 text-white">
               <div className="grid grid-cols-4 gap-4">
                 <div className="font-medium">Tenant Name</div>
                 <div className="font-medium">Unit Number</div>
@@ -223,15 +259,21 @@ export default function PropertyReportPage({ propertyId }: PropertyReportPagePro
               {tenantRiskData.map((tenant, index) => (
                 <div
                   key={tenant.id}
-                  className={`px-6 py-4 ${index % 2 === 0 ? "bg-white" : "bg-slate-50"} hover:bg-slate-100 transition-colors`}
+                  className={`px-6 py-4 ${index % 2 === 0 ? "bg-white" : "bg-slate-50"} transition-colors hover:bg-slate-100`}
                 >
-                  <div className="grid grid-cols-4 gap-4 items-center">
-                    <div className="font-medium text-slate-900">{tenant.tenantName}</div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <div className="font-medium text-slate-900">
+                      {tenant.tenantName}
+                    </div>
                     <div className="text-slate-600">{tenant.unitNumber}</div>
-                    <div className={`font-semibold ${getPermissionColor(tenant.softCreditPermission)}`}>
+                    <div
+                      className={`font-semibold ${getPermissionColor(tenant.softCreditPermission)}`}
+                    >
                       {tenant.softCreditPermission ? "YES" : "NO"}
                     </div>
-                    <div className={`font-bold text-lg ${getRiskColor(tenant.defaultProbability)}`}>
+                    <div
+                      className={`text-lg font-bold ${getRiskColor(tenant.defaultProbability)}`}
+                    >
                       {tenant.defaultProbability}%
                     </div>
                   </div>
@@ -242,20 +284,24 @@ export default function PropertyReportPage({ propertyId }: PropertyReportPagePro
         </Card>
 
         {/* Additional Information */}
-        <Card className="mt-6 bg-slate-50 border-slate-200">
+        <Card className="mt-6 border-slate-200 bg-slate-50">
           <CardContent className="p-6">
             <div className="flex items-start space-x-3">
               <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-[#4F46E5]/10 rounded-full flex items-center justify-center">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#4F46E5]/10">
                   <FileText className="h-4 w-4 text-[#4F46E5]" />
                 </div>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-slate-900 mb-1">Risk Analysis Notes</h4>
-                <p className="text-sm text-slate-600 mb-3">
-                  This report shows the default probability for each tenant based on their credit history, income
-                  verification, and other risk factors. Tenants with soft credit permission have agreed to credit
-                  checks, which generally results in more accurate risk assessments.
+                <h4 className="mb-1 text-sm font-medium text-slate-900">
+                  Risk Analysis Notes
+                </h4>
+                <p className="mb-3 text-sm text-slate-600">
+                  This report shows the default probability for each tenant
+                  based on their credit history, income verification, and other
+                  risk factors. Tenants with soft credit permission have agreed
+                  to credit checks, which generally results in more accurate
+                  risk assessments.
                 </p>
                 <div className="flex items-center space-x-4 text-xs text-slate-500">
                   <span>• Green: Low Risk (0-15%)</span>

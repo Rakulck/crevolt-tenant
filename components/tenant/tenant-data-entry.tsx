@@ -2,13 +2,13 @@
 
 import type React from "react"
 
-import { FileText } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TenantTab } from "../tenant-tab"
-import { SuccessMessage } from "./success-message"
-import { RentRollUpload } from "./rent-roll-upload"
-import { ManualEntryForm } from "./manual-entry-form"
+import { FileText } from "lucide-react"
 import type { TenantData } from "../../types/tenant"
+import { TenantTab } from "../tenant-tab"
+import { ManualEntryForm } from "./manual-entry-form"
+import { RentRollUpload } from "./rent-roll-upload"
+import { SuccessMessage } from "./success-message"
 
 interface TenantDataEntryProps {
   savedTenants: TenantData[]
@@ -45,24 +45,40 @@ export function TenantDataEntry({
     <div className="space-y-6">
       <div className="flex items-center space-x-2 mb-4">
         <FileText className="h-5 w-5 text-slate-600" />
-        <h3 className="text-lg font-semibold text-slate-900">Tenant Data Entry</h3>
+        <h3 className="text-lg font-semibold text-slate-900">
+          Tenant Data Entry
+        </h3>
       </div>
 
       {/* Saved Tenants Tabs */}
       {savedTenants.length > 0 && (
         <div className="space-y-3">
-          <h4 className="text-sm font-medium text-slate-700">Added Tenants ({savedTenants.length})</h4>
+          <h4 className="text-sm font-medium text-slate-700">
+            Added Tenants ({savedTenants.length})
+          </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {savedTenants.map((tenant) => (
-              <TenantTab key={tenant.id} tenant={tenant} onEdit={onEditTenant} onRemove={onRemoveTenant} />
+              <TenantTab
+                key={tenant.id}
+                tenant={tenant}
+                onEdit={onEditTenant}
+                onRemove={onRemoveTenant}
+              />
             ))}
           </div>
         </div>
       )}
 
-      <Tabs value={dataEntryMethod} onValueChange={onDataEntryMethodChange}>
+      <Tabs
+        value={dataEntryMethod}
+        onValueChange={(value: string) =>
+          onDataEntryMethodChange(value as "manual" | "upload")
+        }
+      >
         <div className="text-center mb-4">
-          <p className="text-sm text-slate-600">Choose your preferred method for entering tenant information</p>
+          <p className="text-sm text-slate-600">
+            Choose your preferred method for entering tenant information
+          </p>
         </div>
 
         <TabsList className="grid w-full grid-cols-2">
@@ -70,10 +86,16 @@ export function TenantDataEntry({
           <TabsTrigger value="manual">Manual Entry</TabsTrigger>
         </TabsList>
 
-        <SuccessMessage message={successMessage} isVisible={showSuccessMessage} />
+        <SuccessMessage
+          message={successMessage}
+          isVisible={showSuccessMessage}
+        />
 
         <TabsContent value="upload">
-          <RentRollUpload uploadedFile={uploadedFile} onFileUpload={onFileUpload} />
+          <RentRollUpload
+            uploadedFile={uploadedFile}
+            onFileUpload={onFileUpload}
+          />
         </TabsContent>
 
         <TabsContent value="manual">

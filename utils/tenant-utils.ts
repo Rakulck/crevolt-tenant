@@ -34,7 +34,12 @@ export const getUploadProgress = (tenants: TenantData[]): number => {
   return (getUploadedCount(tenants) / tenants.length) * 100
 }
 
-export const generateSuccessMessage = (tenantName: string, isEditing: boolean): string => {
+export const generateSuccessMessage = (
+  tenantName: string,
+  isEditing: boolean
+): string => {
   const name = tenantName || "Tenant"
-  return isEditing ? `${name} updated successfully!` : `${name} added successfully!`
+  return isEditing
+    ? `${name} updated successfully!`
+    : `${name} added successfully!`
 }

@@ -31,9 +31,12 @@ export function TenantTab({ tenant, onEdit, onRemove }: TenantTabProps) {
             <User className="h-4 w-4 text-[#4F46E5]" />
           </div>
           <div>
-            <h4 className="font-medium text-slate-900">{tenant.tenantName || "Unnamed Tenant"}</h4>
+            <h4 className="font-medium text-slate-900">
+              {tenant.tenantName || "Unnamed Tenant"}
+            </h4>
             <p className="text-sm text-slate-600">
-              Unit: {tenant.unitNumber || "N/A"} • Income: ${tenant.statedMonthlyIncome || "0"}
+              Unit: {tenant.unitNumber || "N/A"} • Income: $
+              {tenant.statedMonthlyIncome || "0"}
             </p>
           </div>
         </div>

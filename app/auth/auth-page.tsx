@@ -7,7 +7,13 @@ import { Eye, EyeOff, Building2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useRouter } from "next/navigation"
 
@@ -33,13 +39,19 @@ export default function AuthPage() {
           <div className="flex items-center justify-center mb-4">
             <Building2 className="h-12 w-12 text-emerald-600" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-900">TenantPro Analytics</h1>
-          <p className="text-slate-600 mt-2">Professional Tenant Analysis Platform</p>
+          <h1 className="text-3xl font-bold text-slate-900">
+            TenantPro Analytics
+          </h1>
+          <p className="text-slate-600 mt-2">
+            Professional Tenant Analysis Platform
+          </p>
         </div>
 
         <Card className="shadow-xl border-0">
           <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-2xl text-center text-slate-900">Welcome</CardTitle>
+            <CardTitle className="text-2xl text-center text-slate-900">
+              Welcome
+            </CardTitle>
             <CardDescription className="text-center text-slate-600">
               Access your tenant analytics dashboard
             </CardDescription>
@@ -55,7 +67,13 @@ export default function AuthPage() {
                 <form className="space-y-4" onSubmit={handleLogin}>
                   <div className="space-y-2">
                     <Label htmlFor="login-email">Email Address</Label>
-                    <Input id="login-email" type="email" placeholder="john@company.com" required className="h-11" />
+                    <Input
+                      id="login-email"
+                      type="email"
+                      placeholder="john@company.com"
+                      required
+                      className="h-11"
+                    />
                   </div>
 
                   <div className="space-y-2">
@@ -86,8 +104,15 @@ export default function AuthPage() {
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <input type="checkbox" id="remember" className="rounded" />
-                      <Label htmlFor="remember" className="text-sm text-slate-600">
+                      <input
+                        type="checkbox"
+                        id="remember"
+                        className="rounded"
+                      />
+                      <Label
+                        htmlFor="remember"
+                        className="text-sm text-slate-600"
+                      >
                         Remember me
                       </Label>
                     </div>
@@ -100,7 +125,10 @@ export default function AuthPage() {
                     </Button>
                   </div>
 
-                  <Button type="submit" className="w-full h-11 bg-[#4F46E5] hover:bg-[#4338CA] text-white">
+                  <Button
+                    type="submit"
+                    className="w-full h-11 bg-[#4F46E5] hover:bg-[#4338CA] text-white"
+                  >
                     Sign In
                   </Button>
                 </form>
@@ -111,22 +139,44 @@ export default function AuthPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="first-name">First Name</Label>
-                      <Input id="first-name" placeholder="John" required className="h-11" />
+                      <Input
+                        id="first-name"
+                        placeholder="John"
+                        required
+                        className="h-11"
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="last-name">Last Name</Label>
-                      <Input id="last-name" placeholder="Doe" required className="h-11" />
+                      <Input
+                        id="last-name"
+                        placeholder="Doe"
+                        required
+                        className="h-11"
+                      />
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" type="tel" placeholder="+1 (555) 123-4567" required className="h-11" />
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="+1 (555) 123-4567"
+                      required
+                      className="h-11"
+                    />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="signup-email">Email Address</Label>
-                    <Input id="signup-email" type="email" placeholder="john@company.com" required className="h-11" />
+                    <Input
+                      id="signup-email"
+                      type="email"
+                      placeholder="john@company.com"
+                      required
+                      className="h-11"
+                    />
                   </div>
 
                   <div className="space-y-2">
@@ -144,7 +194,9 @@ export default function AuthPage() {
                         variant="ghost"
                         size="sm"
                         className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                        onClick={() => setShowSignupPassword(!showSignupPassword)}
+                        onClick={() =>
+                          setShowSignupPassword(!showSignupPassword)
+                        }
                       >
                         {showSignupPassword ? (
                           <EyeOff className="h-4 w-4 text-slate-500" />
@@ -154,25 +206,43 @@ export default function AuthPage() {
                       </Button>
                     </div>
                     <p className="text-xs text-slate-500">
-                      Must be at least 8 characters with uppercase, lowercase, and numbers
+                      Must be at least 8 characters with uppercase, lowercase,
+                      and numbers
                     </p>
                   </div>
 
                   <div className="flex items-start space-x-2">
-                    <input type="checkbox" id="terms" className="rounded mt-1" required />
-                    <Label htmlFor="terms" className="text-sm text-slate-600 leading-relaxed">
+                    <input
+                      type="checkbox"
+                      id="terms"
+                      className="rounded mt-1"
+                      required
+                    />
+                    <Label
+                      htmlFor="terms"
+                      className="text-sm text-slate-600 leading-relaxed"
+                    >
                       I agree to the{" "}
-                      <Button variant="link" className="px-0 h-auto text-[#4F46E5] hover:text-[#4338CA]">
+                      <Button
+                        variant="link"
+                        className="px-0 h-auto text-[#4F46E5] hover:text-[#4338CA]"
+                      >
                         Terms of Service
                       </Button>{" "}
                       and{" "}
-                      <Button variant="link" className="px-0 h-auto text-[#4F46E5] hover:text-[#4338CA]">
+                      <Button
+                        variant="link"
+                        className="px-0 h-auto text-[#4F46E5] hover:text-[#4338CA]"
+                      >
                         Privacy Policy
                       </Button>
                     </Label>
                   </div>
 
-                  <Button type="submit" className="w-full h-11 bg-[#4F46E5] hover:bg-[#4338CA] text-white">
+                  <Button
+                    type="submit"
+                    className="w-full h-11 bg-[#4F46E5] hover:bg-[#4338CA] text-white"
+                  >
                     Create Account
                   </Button>
                 </form>
@@ -184,7 +254,10 @@ export default function AuthPage() {
         <div className="text-center mt-6">
           <p className="text-sm text-slate-500">
             Need help?{" "}
-            <Button variant="link" className="px-0 text-[#4F46E5] hover:text-[#4338CA]">
+            <Button
+              variant="link"
+              className="px-0 text-[#4F46E5] hover:text-[#4338CA]"
+            >
               Contact Support
             </Button>
           </p>

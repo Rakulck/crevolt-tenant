@@ -3,7 +3,13 @@
 import { useEffect } from "react"
 import { AlertTriangle, RefreshCw, Home, Bug } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 
 interface GlobalErrorProps {
   error: Error & { digest?: string }
@@ -44,17 +50,21 @@ Please describe what you were doing when this error occurred:
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
                 <AlertTriangle className="h-8 w-8 text-red-600" />
               </div>
-              <CardTitle className="text-2xl font-bold text-slate-900">Something went wrong!</CardTitle>
+              <CardTitle className="text-2xl font-bold text-slate-900">
+                Something went wrong!
+              </CardTitle>
               <CardDescription className="text-lg">
-                We're sorry, but an unexpected error has occurred. Our team has been notified and is working to fix the
-                issue.
+                We're sorry, but an unexpected error has occurred. Our team has
+                been notified and is working to fix the issue.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Error Details (only in development) */}
               {process.env.NODE_ENV === "development" && (
                 <div className="bg-slate-100 p-4 rounded-lg">
-                  <h4 className="font-medium text-slate-900 mb-2">Error Details (Development Only):</h4>
+                  <h4 className="font-medium text-slate-900 mb-2">
+                    Error Details (Development Only):
+                  </h4>
                   <div className="text-sm text-slate-700 space-y-1">
                     <p>
                       <strong>Message:</strong> {error.message}
@@ -66,7 +76,9 @@ Please describe what you were doing when this error occurred:
                     )}
                     {error.stack && (
                       <details className="mt-2">
-                        <summary className="cursor-pointer font-medium">Stack Trace</summary>
+                        <summary className="cursor-pointer font-medium">
+                          Stack Trace
+                        </summary>
                         <pre className="mt-2 text-xs bg-slate-200 p-2 rounded overflow-auto max-h-40">
                           {error.stack}
                         </pre>
@@ -78,7 +90,10 @@ Please describe what you were doing when this error occurred:
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button onClick={reset} className="bg-[#4F46E5] hover:bg-[#4338CA] text-white">
+                <Button
+                  onClick={reset}
+                  className="bg-[#4F46E5] hover:bg-[#4338CA] text-white"
+                >
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Try Again
                 </Button>
@@ -103,10 +118,12 @@ Please describe what you were doing when this error occurred:
                     </div>
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-blue-900 mb-1">Need Help?</h4>
+                    <h4 className="text-sm font-medium text-blue-900 mb-1">
+                      Need Help?
+                    </h4>
                     <p className="text-sm text-blue-700 mb-3">
-                      If this error persists, please contact our support team. Include the error details above if
-                      possible.
+                      If this error persists, please contact our support team.
+                      Include the error details above if possible.
                     </p>
                     <div className="space-y-1 text-sm text-blue-700">
                       <p>

@@ -2,11 +2,24 @@
 
 import type React from "react"
 import { useState } from "react"
-import { ArrowLeft, FileText, Upload, Trash2, Download, Eye } from "lucide-react"
+import {
+  ArrowLeft,
+  FileText,
+  Upload,
+  Trash2,
+  Download,
+  Eye,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { useRouter } from "next/navigation"
 
 interface LeaseTemplate {
@@ -69,14 +82,18 @@ export default function LeaseTemplatesPage() {
     setSelectedFile(null)
 
     // Reset file input
-    const fileInput = document.getElementById("template-upload") as HTMLInputElement
+    const fileInput = document.getElementById(
+      "template-upload"
+    ) as HTMLInputElement
     if (fileInput) {
       fileInput.value = ""
     }
   }
 
   const handleDeleteTemplate = (templateId: string) => {
-    setTemplates((prev) => prev.filter((template) => template.id !== templateId))
+    setTemplates((prev) =>
+      prev.filter((template) => template.id !== templateId)
+    )
   }
 
   const handleDownloadTemplate = (template: LeaseTemplate) => {
@@ -95,14 +112,20 @@ export default function LeaseTemplatesPage() {
       <header className="bg-white border-b border-slate-200 px-6 py-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" onClick={() => router.push("/dashboard")} className="flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              onClick={() => router.push("/dashboard")}
+              className="flex items-center space-x-2"
+            >
               <ArrowLeft className="h-4 w-4" />
               <span>Back to Dashboard</span>
             </Button>
             <div className="h-6 w-px bg-slate-300" />
             <div className="flex items-center space-x-2">
               <FileText className="h-6 w-6 text-[#4F46E5]" />
-              <h1 className="text-xl font-semibold text-slate-900">Lease Agreement Templates</h1>
+              <h1 className="text-xl font-semibold text-slate-900">
+                Lease Agreement Templates
+              </h1>
             </div>
           </div>
         </div>
@@ -113,13 +136,21 @@ export default function LeaseTemplatesPage() {
         {/* Upload New Template Section */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="text-xl text-slate-900">Upload New Template</CardTitle>
-            <CardDescription>Add a new lease agreement template that you can use for your properties.</CardDescription>
+            <CardTitle className="text-xl text-slate-900">
+              Upload New Template
+            </CardTitle>
+            <CardDescription>
+              Add a new lease agreement template that you can use for your
+              properties.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-end gap-4">
               <div className="flex-1">
-                <Label htmlFor="template-upload" className="text-sm font-medium text-slate-700 mb-2 block">
+                <Label
+                  htmlFor="template-upload"
+                  className="text-sm font-medium text-slate-700 mb-2 block"
+                >
                   Choose Template File
                 </Label>
                 <Input
@@ -129,7 +160,9 @@ export default function LeaseTemplatesPage() {
                   onChange={handleFileUpload}
                   className="h-11"
                 />
-                <p className="text-sm text-slate-500 mt-1">Accepted formats: PDF, DOC, DOCX</p>
+                <p className="text-sm text-slate-500 mt-1">
+                  Accepted formats: PDF, DOC, DOCX
+                </p>
               </div>
               <Button
                 onClick={handleUploadTemplate}
@@ -143,7 +176,8 @@ export default function LeaseTemplatesPage() {
             {selectedFile && (
               <div className="mt-4 p-3 bg-[#4F46E5]/10 border border-[#4F46E5]/20 rounded-md">
                 <p className="text-sm text-[#4F46E5]">
-                  <strong>Selected file:</strong> {selectedFile.name} ({Math.round(selectedFile.size / 1024)} KB)
+                  <strong>Selected file:</strong> {selectedFile.name} (
+                  {Math.round(selectedFile.size / 1024)} KB)
                 </p>
               </div>
             )}
@@ -153,8 +187,12 @@ export default function LeaseTemplatesPage() {
         {/* Your Templates Section */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-xl text-slate-900">Your Templates</CardTitle>
-            <CardDescription>Manage your lease agreement templates.</CardDescription>
+            <CardTitle className="text-xl text-slate-900">
+              Your Templates
+            </CardTitle>
+            <CardDescription>
+              Manage your lease agreement templates.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             {templates.length > 0 ? (
@@ -167,9 +205,12 @@ export default function LeaseTemplatesPage() {
                     <div className="flex items-center space-x-4">
                       <div className="w-3 h-16 bg-[#4F46E5] rounded-sm flex-shrink-0" />
                       <div>
-                        <h3 className="font-semibold text-slate-900 text-lg">{template.name}</h3>
+                        <h3 className="font-semibold text-slate-900 text-lg">
+                          {template.name}
+                        </h3>
                         <p className="text-slate-600 text-sm">
-                          Uploaded {template.uploadedDate} • {template.fileType} • {template.fileSize}
+                          Uploaded {template.uploadedDate} • {template.fileType}{" "}
+                          • {template.fileSize}
                         </p>
                       </div>
                     </div>
@@ -208,8 +249,12 @@ export default function LeaseTemplatesPage() {
             ) : (
               <div className="text-center py-12">
                 <FileText className="mx-auto h-12 w-12 text-slate-400 mb-4" />
-                <h3 className="text-lg font-medium text-slate-900 mb-2">No templates yet</h3>
-                <p className="text-slate-600 mb-4">Upload your first lease agreement template to get started.</p>
+                <h3 className="text-lg font-medium text-slate-900 mb-2">
+                  No templates yet
+                </h3>
+                <p className="text-slate-600 mb-4">
+                  Upload your first lease agreement template to get started.
+                </p>
               </div>
             )}
           </CardContent>
@@ -225,13 +270,19 @@ export default function LeaseTemplatesPage() {
                 </div>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-slate-900 mb-1">Template Management Tips</h4>
+                <h4 className="text-sm font-medium text-slate-900 mb-1">
+                  Template Management Tips
+                </h4>
                 <p className="text-sm text-slate-600 mb-3">
-                  Keep your lease templates organized and up-to-date. You can upload different templates for different
-                  property types and lease terms. Templates can be used when generating lease agreements for your
-                  tenants.
+                  Keep your lease templates organized and up-to-date. You can
+                  upload different templates for different property types and
+                  lease terms. Templates can be used when generating lease
+                  agreements for your tenants.
                 </p>
-                <Button variant="link" className="px-0 text-[#4F46E5] hover:text-[#4338CA] text-sm">
+                <Button
+                  variant="link"
+                  className="px-0 text-[#4F46E5] hover:text-[#4338CA] text-sm"
+                >
                   Learn more about lease templates →
                 </Button>
               </div>

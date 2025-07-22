@@ -37,14 +37,20 @@ export function TenantFormStepper({ currentStep, steps }: StepperProps) {
                 </div>
                 <span
                   className={`mt-2 text-sm font-medium ${
-                    isCurrent ? "text-[#4F46E5]" : isCompleted ? "text-slate-900" : "text-slate-400"
+                    isCurrent
+                      ? "text-[#4F46E5]"
+                      : isCompleted
+                        ? "text-slate-900"
+                        : "text-slate-400"
                   }`}
                 >
                   {step}
                 </span>
               </div>
               {index < steps.length - 1 && (
-                <div className={`h-0.5 w-16 mx-4 ${isCompleted ? "bg-[#4F46E5]" : "bg-slate-300"}`} />
+                <div
+                  className={`h-0.5 w-16 mx-4 ${isCompleted ? "bg-[#4F46E5]" : "bg-slate-300"}`}
+                />
               )}
             </div>
           )

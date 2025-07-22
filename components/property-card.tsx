@@ -1,10 +1,21 @@
 "use client"
 
-import { Building, MapPin, Calendar, TrendingUp, MoreVertical } from "lucide-react"
+import {
+  Building,
+  MapPin,
+  Calendar,
+  TrendingUp,
+  MoreVertical,
+} from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { useRouter } from "next/navigation"
 
 interface PropertyCardProps {
@@ -16,7 +27,14 @@ interface PropertyCardProps {
   tenantCount?: number
 }
 
-export function PropertyCard({ id, name, address, defaultRisk, lastUpdated, tenantCount }: PropertyCardProps) {
+export function PropertyCard({
+  id,
+  name,
+  address,
+  defaultRisk,
+  lastUpdated,
+  tenantCount,
+}: PropertyCardProps) {
   const router = useRouter()
 
   const getRiskColor = (risk: number) => {
@@ -50,7 +68,9 @@ export function PropertyCard({ id, name, address, defaultRisk, lastUpdated, tena
 
             <div className="flex items-center space-x-4 mb-4">
               <div className="flex items-center space-x-2">
-                <span className="text-sm font-medium text-slate-700">Default Risk:</span>
+                <span className="text-sm font-medium text-slate-700">
+                  Default Risk:
+                </span>
                 <Badge className={getRiskColor(defaultRisk)}>
                   {defaultRisk}% - {getRiskLevel(defaultRisk)}
                 </Badge>
@@ -89,10 +109,14 @@ export function PropertyCard({ id, name, address, defaultRisk, lastUpdated, tena
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => router.push(`/dashboard/edit-property/${id}`)}>
+                <DropdownMenuItem
+                  onClick={() => router.push(`/dashboard/edit-property/${id}`)}
+                >
                   Edit Property
                 </DropdownMenuItem>
-                <DropdownMenuItem className="text-red-600">Remove Property</DropdownMenuItem>
+                <DropdownMenuItem className="text-red-600">
+                  Remove Property
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

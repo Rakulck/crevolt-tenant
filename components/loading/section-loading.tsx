@@ -8,7 +8,10 @@ interface SectionLoadingProps {
   height?: string
 }
 
-export function SectionLoading({ message = "Loading...", height = "h-64" }: SectionLoadingProps) {
+export function SectionLoading({
+  message = "Loading...",
+  height = "h-64",
+}: SectionLoadingProps) {
   return (
     <Card>
       <CardContent className={`flex items-center justify-center ${height}`}>

@@ -2,12 +2,16 @@
 
 import { useState } from "react"
 import type { TenantData } from "../types/tenant"
-import { createEmptyTenant, generateSuccessMessage } from "../utils/tenant-utils"
+import {
+  createEmptyTenant,
+  generateSuccessMessage,
+} from "../utils/tenant-utils"
 
 export const useTenantForm = () => {
   const [savedTenants, setSavedTenants] = useState<TenantData[]>([])
   const [editingTenantId, setEditingTenantId] = useState<string | null>(null)
-  const [currentTenant, setCurrentTenant] = useState<TenantData>(createEmptyTenant())
+  const [currentTenant, setCurrentTenant] =
+    useState<TenantData>(createEmptyTenant())
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")
 
@@ -15,15 +19,27 @@ export const useTenantForm = () => {
     setCurrentTenant((prev) => ({ ...prev, [field]: value }))
   }
 
-  const handleSavedTenantChange = (tenantId: string, field: string, value: string) => {
-    setSavedTenants((prev) => prev.map((tenant) => (tenant.id === tenantId ? { ...tenant, [field]: value } : tenant)))
+  const handleSavedTenantChange = (
+    tenantId: string,
+    field: string,
+    value: string
+  ) => {
+    setSavedTenants((prev) =>
+      prev.map((tenant) =>
+        tenant.id === tenantId ? { ...tenant, [field]: value } : tenant
+      )
+    )
   }
 
   const saveTenant = () => {
     const isEditing = !!editingTenantId
 
     if (isEditing) {
-      setSavedTenants((prev) => prev.map((tenant) => (tenant.id === editingTenantId ? currentTenant : tenant)))
+      setSavedTenants((prev) =>
+        prev.map((tenant) =>
+          tenant.id === editingTenantId ? currentTenant : tenant
+        )
+      )
       setEditingTenantId(null)
     } else {
       setSavedTenants((prev) => [...prev, currentTenant])
@@ -62,8 +78,14 @@ export const useTenantForm = () => {
   const handleLeaseAgreementUpload = (tenantId: string, file: File) => {
     setSavedTenants((prev) =>
       prev.map((tenant) =>
-        tenant.id === tenantId ? { ...tenant, leaseAgreementFile: file, leaseAgreementUploaded: true } : tenant,
-      ),
+        tenant.id === tenantId
+          ? {
+              ...tenant,
+              leaseAgreementFile: file,
+              leaseAgreementUploaded: true,
+            }
+          : tenant
+      )
     )
   }
 

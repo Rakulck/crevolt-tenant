@@ -20,7 +20,9 @@ export function DashboardHeader() {
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
             <Building2 className="h-8 w-8 text-[#4F46E5]" />
-            <h1 className="text-2xl font-bold text-slate-900">Tenant Default Risk Dashboard</h1>
+            <h1 className="text-2xl font-bold text-slate-900">
+              Tenant Default Risk Dashboard
+            </h1>
           </div>
         </div>
 
@@ -35,13 +37,18 @@ export function DashboardHeader() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="bg-slate-500 hover:bg-slate-600 text-white border-slate-500">
+              <Button
+                variant="outline"
+                className="bg-slate-500 hover:bg-slate-600 text-white border-slate-500"
+              >
                 <User className="h-4 w-4 mr-2" />
                 Profile
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuItem onClick={() => router.push("/dashboard/profile")}>
+              <DropdownMenuItem
+                onClick={() => router.push("/dashboard/profile")}
+              >
                 <User className="h-4 w-4 mr-2" />
                 Account Settings
               </DropdownMenuItem>

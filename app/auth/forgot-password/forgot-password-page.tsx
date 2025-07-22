@@ -6,7 +6,13 @@ import { ArrowLeft, Building2, Mail, Send, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { useRouter } from "next/navigation"
 
 export default function ForgotPasswordPage() {
@@ -44,8 +50,12 @@ export default function ForgotPasswordPage() {
             <div className="flex items-center justify-center mb-4">
               <Building2 className="h-12 w-12 text-emerald-600" />
             </div>
-            <h1 className="text-3xl font-bold text-slate-900">TenantPro Analytics</h1>
-            <p className="text-slate-600 mt-2">Professional Tenant Analysis Platform</p>
+            <h1 className="text-3xl font-bold text-slate-900">
+              TenantPro Analytics
+            </h1>
+            <p className="text-slate-600 mt-2">
+              Professional Tenant Analysis Platform
+            </p>
           </div>
 
           <Card className="shadow-xl border-0">
@@ -53,7 +63,9 @@ export default function ForgotPasswordPage() {
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
                 <CheckCircle className="h-6 w-6 text-green-600" />
               </div>
-              <CardTitle className="text-2xl text-slate-900">Check Your Email</CardTitle>
+              <CardTitle className="text-2xl text-slate-900">
+                Check Your Email
+              </CardTitle>
               <CardDescription className="text-slate-600">
                 We've sent a verification code to your email address
               </CardDescription>
@@ -90,7 +102,11 @@ export default function ForgotPasswordPage() {
                   )}
                 </Button>
 
-                <Button onClick={() => router.push("/auth")} variant="ghost" className="w-full h-11">
+                <Button
+                  onClick={() => router.push("/auth")}
+                  variant="ghost"
+                  className="w-full h-11"
+                >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Login
                 </Button>
@@ -102,10 +118,12 @@ export default function ForgotPasswordPage() {
                     <Mail className="h-5 w-5 text-blue-600 mt-0.5" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-blue-900 mb-1">Next Steps</h4>
+                    <h4 className="text-sm font-medium text-blue-900 mb-1">
+                      Next Steps
+                    </h4>
                     <p className="text-sm text-blue-700">
-                      Click the link in your email to reset your password. The link will expire in 15 minutes for
-                      security.
+                      Click the link in your email to reset your password. The
+                      link will expire in 15 minutes for security.
                     </p>
                   </div>
                 </div>
@@ -116,7 +134,10 @@ export default function ForgotPasswordPage() {
           <div className="text-center mt-6">
             <p className="text-sm text-slate-500">
               Need help?{" "}
-              <Button variant="link" className="px-0 text-[#4F46E5] hover:text-[#4338CA]">
+              <Button
+                variant="link"
+                className="px-0 text-[#4F46E5] hover:text-[#4338CA]"
+              >
                 Contact Support
               </Button>
             </p>
@@ -133,15 +154,22 @@ export default function ForgotPasswordPage() {
           <div className="flex items-center justify-center mb-4">
             <Building2 className="h-12 w-12 text-emerald-600" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-900">TenantPro Analytics</h1>
-          <p className="text-slate-600 mt-2">Professional Tenant Analysis Platform</p>
+          <h1 className="text-3xl font-bold text-slate-900">
+            TenantPro Analytics
+          </h1>
+          <p className="text-slate-600 mt-2">
+            Professional Tenant Analysis Platform
+          </p>
         </div>
 
         <Card className="shadow-xl border-0">
           <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-2xl text-center text-slate-900">Forgot Password?</CardTitle>
+            <CardTitle className="text-2xl text-center text-slate-900">
+              Forgot Password?
+            </CardTitle>
             <CardDescription className="text-center text-slate-600">
-              Enter your email address and we'll send you a verification code to reset your password
+              Enter your email address and we'll send you a verification code to
+              reset your password
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -180,7 +208,12 @@ export default function ForgotPasswordPage() {
                 )}
               </Button>
 
-              <Button type="button" onClick={() => router.push("/auth")} variant="ghost" className="w-full h-11">
+              <Button
+                type="button"
+                onClick={() => router.push("/auth")}
+                variant="ghost"
+                className="w-full h-11"
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Login
               </Button>

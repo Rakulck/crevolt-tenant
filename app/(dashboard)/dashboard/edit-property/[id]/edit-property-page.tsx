@@ -1,13 +1,33 @@
 "use client"
-import { useState, useEffect } from "react"
-import { ArrowLeft, Building2, MapPin, Calendar, Hash, Users, Save } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  ArrowLeft,
+  Building2,
+  Calendar,
+  Hash,
+  MapPin,
+  Save,
+  Users,
+} from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 import { AddressAutocomplete } from "../../../../../components/address-autocomplete"
 import { GoogleMapsScript } from "../../../../../components/google-maps-script"
 
@@ -42,7 +62,9 @@ interface EditPropertyPageProps {
   propertyId: string
 }
 
-export default function EditPropertyPage({ propertyId }: EditPropertyPageProps) {
+export default function EditPropertyPage({
+  propertyId,
+}: EditPropertyPageProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
@@ -114,8 +136,16 @@ export default function EditPropertyPage({ propertyId }: EditPropertyPageProps) 
     setPropertyData((prev) => ({ ...prev, [field]: value }))
   }
 
-  const handleTenantChange = (tenantId: string, field: keyof TenantInfo, value: string | number) => {
-    setTenants((prev) => prev.map((tenant) => (tenant.id === tenantId ? { ...tenant, [field]: value } : tenant)))
+  const handleTenantChange = (
+    tenantId: string,
+    field: keyof TenantInfo,
+    value: string | number
+  ) => {
+    setTenants((prev) =>
+      prev.map((tenant) =>
+        tenant.id === tenantId ? { ...tenant, [field]: value } : tenant
+      )
+    )
   }
 
   const handleRemoveTenant = (tenantId: string) => {
@@ -175,17 +205,27 @@ export default function EditPropertyPage({ propertyId }: EditPropertyPageProps) 
         <header className="bg-white border-b border-slate-200 px-6 py-4">
           <div className="flex items-center justify-between max-w-7xl mx-auto">
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" onClick={() => router.push("/dashboard")} className="flex items-center space-x-2">
+              <Button
+                variant="ghost"
+                onClick={() => router.push("/dashboard")}
+                className="flex items-center space-x-2"
+              >
                 <ArrowLeft className="h-4 w-4" />
                 <span>Back to Dashboard</span>
               </Button>
               <div className="h-6 w-px bg-slate-300" />
               <div className="flex items-center space-x-2">
                 <Building2 className="h-6 w-6 text-[#4F46E5]" />
-                <h1 className="text-xl font-semibold text-slate-900">Edit Property</h1>
+                <h1 className="text-xl font-semibold text-slate-900">
+                  Edit Property
+                </h1>
               </div>
             </div>
-            <Button onClick={handleSave} disabled={isSaving} className="bg-[#4F46E5] hover:bg-[#4338CA] text-white">
+            <Button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="bg-[#4F46E5] hover:bg-[#4338CA] text-white"
+            >
               {isSaving ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
@@ -203,7 +243,11 @@ export default function EditPropertyPage({ propertyId }: EditPropertyPageProps) 
 
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-6 py-8">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="space-y-6"
+          >
             <TabsList className="grid w-full grid-cols-2 max-w-md">
               <TabsTrigger value="property">Property Details</TabsTrigger>
               <TabsTrigger value="tenants">Tenant Information</TabsTrigger>
@@ -213,50 +257,72 @@ export default function EditPropertyPage({ propertyId }: EditPropertyPageProps) 
             <TabsContent value="property" className="space-y-6">
               <Card className="shadow-lg">
                 <CardHeader>
-                  <CardTitle className="text-2xl text-slate-900">Property Information</CardTitle>
-                  <CardDescription>Update your property details and information.</CardDescription>
+                  <CardTitle className="text-2xl text-slate-900">
+                    Property Information
+                  </CardTitle>
+                  <CardDescription>
+                    Update your property details and information.
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-8">
                   {/* Basic Information */}
                   <div className="space-y-6">
                     <div className="flex items-center space-x-2 mb-4">
                       <Building2 className="h-5 w-5 text-slate-600" />
-                      <h3 className="text-lg font-semibold text-slate-900">Basic Information</h3>
+                      <h3 className="text-lg font-semibold text-slate-900">
+                        Basic Information
+                      </h3>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="md:col-span-2 space-y-2">
-                        <Label htmlFor="property-name" className="text-sm font-medium">
+                        <Label
+                          htmlFor="property-name"
+                          className="text-sm font-medium"
+                        >
                           Property Name *
                         </Label>
                         <Input
                           id="property-name"
                           placeholder="e.g., Sunset Apartments - Unit 4B"
                           value={propertyData.name}
-                          onChange={(e) => handleInputChange("name", e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange("name", e.target.value)
+                          }
                           required
                           className="h-11"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="property-type" className="text-sm font-medium">
+                        <Label
+                          htmlFor="property-type"
+                          className="text-sm font-medium"
+                        >
                           Property Type *
                         </Label>
                         <Select
                           value={propertyData.propertyType}
-                          onValueChange={(value) => handleInputChange("propertyType", value)}
+                          onValueChange={(value) =>
+                            handleInputChange("propertyType", value)
+                          }
                         >
                           <SelectTrigger className="h-11">
                             <SelectValue placeholder="Select property type" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="apartment">Apartment Complex</SelectItem>
-                            <SelectItem value="single-family">Single Family Home</SelectItem>
+                            <SelectItem value="apartment">
+                              Apartment Complex
+                            </SelectItem>
+                            <SelectItem value="single-family">
+                              Single Family Home
+                            </SelectItem>
                             <SelectItem value="duplex">Duplex</SelectItem>
                             <SelectItem value="townhouse">Townhouse</SelectItem>
                             <SelectItem value="condo">Condominium</SelectItem>
-                            <SelectItem value="commercial">Commercial Property</SelectItem>
+                            <SelectItem value="commercial">
+                              Commercial Property
+                            </SelectItem>
                             <SelectItem value="mixed-use">Mixed Use</SelectItem>
                             <SelectItem value="other">Other</SelectItem>
                           </SelectContent>
@@ -264,7 +330,10 @@ export default function EditPropertyPage({ propertyId }: EditPropertyPageProps) 
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="number-of-units" className="text-sm font-medium">
+                        <Label
+                          htmlFor="number-of-units"
+                          className="text-sm font-medium"
+                        >
                           Number of Units *
                         </Label>
                         <div className="relative">
@@ -275,7 +344,9 @@ export default function EditPropertyPage({ propertyId }: EditPropertyPageProps) 
                             min="1"
                             placeholder="1"
                             value={propertyData.numberOfUnits}
-                            onChange={(e) => handleInputChange("numberOfUnits", e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange("numberOfUnits", e.target.value)
+                            }
                             required
                             className="h-11 pl-10"
                           />
@@ -288,20 +359,27 @@ export default function EditPropertyPage({ propertyId }: EditPropertyPageProps) 
                   <div className="space-y-6">
                     <div className="flex items-center space-x-2 mb-4">
                       <MapPin className="h-5 w-5 text-slate-600" />
-                      <h3 className="text-lg font-semibold text-slate-900">Location</h3>
+                      <h3 className="text-lg font-semibold text-slate-900">
+                        Location
+                      </h3>
                     </div>
 
                     <div className="grid grid-cols-1 gap-6">
                       <div className="space-y-2">
-                        <Label htmlFor="address" className="text-sm font-medium">
+                        <Label
+                          htmlFor="address"
+                          className="text-sm font-medium"
+                        >
                           Street Address *
                         </Label>
                         <AddressAutocomplete
                           id="address"
                           placeholder="123 Main Street"
                           value={propertyData.address}
-                          onChange={(value) => handleInputChange("address", value)}
-                          onAddressSelect={(addressData) => {
+                          onChange={(value: string) =>
+                            handleInputChange("address", value)
+                          }
+                          onAddressSelect={(addressData: any) => {
                             setPropertyData((prev) => ({
                               ...prev,
                               address: addressData.address,
@@ -324,35 +402,47 @@ export default function EditPropertyPage({ propertyId }: EditPropertyPageProps) 
                             id="city"
                             placeholder="Los Angeles"
                             value={propertyData.city}
-                            onChange={(e) => handleInputChange("city", e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange("city", e.target.value)
+                            }
                             required
                             className="h-11"
                           />
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="state" className="text-sm font-medium">
+                          <Label
+                            htmlFor="state"
+                            className="text-sm font-medium"
+                          >
                             State *
                           </Label>
                           <Input
                             id="state"
                             placeholder="CA"
                             value={propertyData.state}
-                            onChange={(e) => handleInputChange("state", e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange("state", e.target.value)
+                            }
                             required
                             className="h-11"
                           />
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="zip-code" className="text-sm font-medium">
+                          <Label
+                            htmlFor="zip-code"
+                            className="text-sm font-medium"
+                          >
                             ZIP Code *
                           </Label>
                           <Input
                             id="zip-code"
                             placeholder="90028"
                             value={propertyData.zipCode}
-                            onChange={(e) => handleInputChange("zipCode", e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange("zipCode", e.target.value)
+                            }
                             required
                             className="h-11"
                           />
@@ -365,13 +455,19 @@ export default function EditPropertyPage({ propertyId }: EditPropertyPageProps) 
                   <div className="space-y-6">
                     <div className="flex items-center space-x-2 mb-4">
                       <Calendar className="h-5 w-5 text-slate-600" />
-                      <h3 className="text-lg font-semibold text-slate-900">Additional Details</h3>
+                      <h3 className="text-lg font-semibold text-slate-900">
+                        Additional Details
+                      </h3>
                     </div>
 
                     <div className="grid grid-cols-1 gap-6">
                       <div className="space-y-2">
-                        <Label htmlFor="year-built" className="text-sm font-medium">
-                          Year Built <span className="text-slate-400">(Optional)</span>
+                        <Label
+                          htmlFor="year-built"
+                          className="text-sm font-medium"
+                        >
+                          Year Built{" "}
+                          <span className="text-slate-400">(Optional)</span>
                         </Label>
                         <Input
                           id="year-built"
@@ -380,7 +476,9 @@ export default function EditPropertyPage({ propertyId }: EditPropertyPageProps) 
                           max={new Date().getFullYear()}
                           placeholder="2020"
                           value={propertyData.yearBuilt}
-                          onChange={(e) => handleInputChange("yearBuilt", e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange("yearBuilt", e.target.value)
+                          }
                           className="h-11"
                         />
                       </div>
@@ -396,11 +494,19 @@ export default function EditPropertyPage({ propertyId }: EditPropertyPageProps) 
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="text-2xl text-slate-900">Tenant Information</CardTitle>
-                      <CardDescription>Manage tenants for {propertyData.name}</CardDescription>
+                      <CardTitle className="text-2xl text-slate-900">
+                        Tenant Information
+                      </CardTitle>
+                      <CardDescription>
+                        Manage tenants for {propertyData.name}
+                      </CardDescription>
                     </div>
                     <Button
-                      onClick={() => router.push(`/dashboard/add-tenant?propertyId=${propertyId}`)}
+                      onClick={() =>
+                        router.push(
+                          `/dashboard/add-tenant?propertyId=${propertyId}`
+                        )
+                      }
                       className="bg-[#4F46E5] hover:bg-[#4338CA] text-white"
                     >
                       <Users className="h-4 w-4 mr-2" />
@@ -416,84 +522,146 @@ export default function EditPropertyPage({ propertyId }: EditPropertyPageProps) 
                           <CardContent className="p-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                               <div className="space-y-2">
-                                <Label htmlFor={`tenant-name-${tenant.id}`} className="text-sm font-medium">
+                                <Label
+                                  htmlFor={`tenant-name-${tenant.id}`}
+                                  className="text-sm font-medium"
+                                >
                                   Tenant Name
                                 </Label>
                                 <Input
                                   id={`tenant-name-${tenant.id}`}
                                   value={tenant.name}
-                                  onChange={(e) => handleTenantChange(tenant.id, "name", e.target.value)}
+                                  onChange={(e) =>
+                                    handleTenantChange(
+                                      tenant.id,
+                                      "name",
+                                      e.target.value
+                                    )
+                                  }
                                   className="h-10"
                                 />
                               </div>
 
                               <div className="space-y-2">
-                                <Label htmlFor={`unit-number-${tenant.id}`} className="text-sm font-medium">
+                                <Label
+                                  htmlFor={`unit-number-${tenant.id}`}
+                                  className="text-sm font-medium"
+                                >
                                   Unit Number
                                 </Label>
                                 <Input
                                   id={`unit-number-${tenant.id}`}
                                   value={tenant.unitNumber}
-                                  onChange={(e) => handleTenantChange(tenant.id, "unitNumber", e.target.value)}
+                                  onChange={(e) =>
+                                    handleTenantChange(
+                                      tenant.id,
+                                      "unitNumber",
+                                      e.target.value
+                                    )
+                                  }
                                   className="h-10"
                                 />
                               </div>
 
                               <div className="space-y-2">
-                                <Label htmlFor={`monthly-rent-${tenant.id}`} className="text-sm font-medium">
+                                <Label
+                                  htmlFor={`monthly-rent-${tenant.id}`}
+                                  className="text-sm font-medium"
+                                >
                                   Monthly Rent
                                 </Label>
                                 <Input
                                   id={`monthly-rent-${tenant.id}`}
                                   value={tenant.monthlyRent}
-                                  onChange={(e) => handleTenantChange(tenant.id, "monthlyRent", e.target.value)}
+                                  onChange={(e) =>
+                                    handleTenantChange(
+                                      tenant.id,
+                                      "monthlyRent",
+                                      e.target.value
+                                    )
+                                  }
                                   placeholder="$2,500"
                                   className="h-10"
                                 />
                               </div>
 
                               <div className="space-y-2">
-                                <Label htmlFor={`lease-start-${tenant.id}`} className="text-sm font-medium">
+                                <Label
+                                  htmlFor={`lease-start-${tenant.id}`}
+                                  className="text-sm font-medium"
+                                >
                                   Lease Start Date
                                 </Label>
                                 <Input
                                   id={`lease-start-${tenant.id}`}
                                   type="date"
                                   value={tenant.leaseStart}
-                                  onChange={(e) => handleTenantChange(tenant.id, "leaseStart", e.target.value)}
+                                  onChange={(e) =>
+                                    handleTenantChange(
+                                      tenant.id,
+                                      "leaseStart",
+                                      e.target.value
+                                    )
+                                  }
                                   className="h-10"
                                 />
                               </div>
 
                               <div className="space-y-2">
-                                <Label htmlFor={`lease-end-${tenant.id}`} className="text-sm font-medium">
+                                <Label
+                                  htmlFor={`lease-end-${tenant.id}`}
+                                  className="text-sm font-medium"
+                                >
                                   Lease End Date
                                 </Label>
                                 <Input
                                   id={`lease-end-${tenant.id}`}
                                   type="date"
                                   value={tenant.leaseEnd}
-                                  onChange={(e) => handleTenantChange(tenant.id, "leaseEnd", e.target.value)}
+                                  onChange={(e) =>
+                                    handleTenantChange(
+                                      tenant.id,
+                                      "leaseEnd",
+                                      e.target.value
+                                    )
+                                  }
                                   className="h-10"
                                 />
                               </div>
 
                               <div className="space-y-2">
-                                <Label htmlFor={`status-${tenant.id}`} className="text-sm font-medium">
+                                <Label
+                                  htmlFor={`status-${tenant.id}`}
+                                  className="text-sm font-medium"
+                                >
                                   Status
                                 </Label>
                                 <Select
                                   value={tenant.status}
-                                  onValueChange={(value) => handleTenantChange(tenant.id, "status", value)}
+                                  onValueChange={(value) =>
+                                    handleTenantChange(
+                                      tenant.id,
+                                      "status",
+                                      value
+                                    )
+                                  }
                                 >
                                   <SelectTrigger className="h-10">
                                     <SelectValue placeholder="Select status" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="Active">Active</SelectItem>
-                                    <SelectItem value="Pending">Pending</SelectItem>
-                                    <SelectItem value="Expired">Expired</SelectItem>
-                                    <SelectItem value="Terminated">Terminated</SelectItem>
+                                    <SelectItem value="Active">
+                                      Active
+                                    </SelectItem>
+                                    <SelectItem value="Pending">
+                                      Pending
+                                    </SelectItem>
+                                    <SelectItem value="Expired">
+                                      Expired
+                                    </SelectItem>
+                                    <SelectItem value="Terminated">
+                                      Terminated
+                                    </SelectItem>
                                   </SelectContent>
                                 </Select>
                               </div>
@@ -508,7 +676,9 @@ export default function EditPropertyPage({ propertyId }: EditPropertyPageProps) 
                                 </div>
                                 <span className="text-sm text-slate-600">
                                   Risk Score:{" "}
-                                  <span className={`font-medium ${getRiskColor(tenant.riskScore).split(" ")[0]}`}>
+                                  <span
+                                    className={`font-medium ${getRiskColor(tenant.riskScore).split(" ")[0]}`}
+                                  >
                                     {tenant.riskScore}%
                                   </span>
                                 </span>
@@ -531,12 +701,19 @@ export default function EditPropertyPage({ propertyId }: EditPropertyPageProps) 
                   ) : (
                     <div className="text-center py-12">
                       <Users className="mx-auto h-12 w-12 text-slate-400 mb-4" />
-                      <h3 className="text-lg font-medium text-slate-900 mb-2">No tenants yet</h3>
+                      <h3 className="text-lg font-medium text-slate-900 mb-2">
+                        No tenants yet
+                      </h3>
                       <p className="text-slate-600 mb-4">
-                        Add tenants to start tracking their information and risk scores.
+                        Add tenants to start tracking their information and risk
+                        scores.
                       </p>
                       <Button
-                        onClick={() => router.push(`/dashboard/add-tenant?propertyId=${propertyId}`)}
+                        onClick={() =>
+                          router.push(
+                            `/dashboard/add-tenant?propertyId=${propertyId}`
+                          )
+                        }
                         className="bg-[#4F46E5] hover:bg-[#4338CA] text-white"
                       >
                         <Users className="h-4 w-4 mr-2" />

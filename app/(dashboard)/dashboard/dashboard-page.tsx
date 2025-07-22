@@ -1,16 +1,18 @@
 "use client"
 
-import { useEffect, useState, Suspense } from "react"
-import { ErrorBoundary } from "../../../components/error-boundary"
-import { SectionLoading } from "../../../components/loading/section-loading"
+import { Suspense, useEffect, useState } from "react"
+
+import { AddPropertyButton } from "../../../components/add-property-button"
 import { DashboardHeader } from "../../../components/dashboard-header"
 import { DashboardStats } from "../../../components/dashboard-stats"
+import { ErrorBoundary } from "../../../components/error-boundary"
+import { SectionLoading } from "../../../components/loading/section-loading"
 import { PropertyCard } from "../../../components/property-card"
-import { AddPropertyButton } from "../../../components/add-property-button"
 
 export default function Dashboard() {
   const [properties, setProperties] = useState([
     {
+      id: "prop_1",
       name: "Sunset Apartments - Unit 4B",
       address: "1234 Sunset Blvd, Los Angeles, CA 90028",
       defaultRisk: 12,
@@ -18,6 +20,7 @@ export default function Dashboard() {
       tenantCount: 1,
     },
     {
+      id: "prop_2",
       name: "Downtown Loft - Suite 201",
       address: "567 Main St, Downtown, CA 90012",
       defaultRisk: 7,
@@ -25,6 +28,7 @@ export default function Dashboard() {
       tenantCount: 1,
     },
     {
+      id: "prop_3",
       name: "Riverside Complex - Building A",
       address: "890 River Rd, Riverside, CA 92501",
       defaultRisk: 23,
@@ -54,14 +58,16 @@ export default function Dashboard() {
     <div className="min-h-screen bg-slate-50">
       <DashboardHeader />
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      <main className="mx-auto max-w-7xl px-6 py-8">
         <ErrorBoundary>
-          <Suspense fallback={<SectionLoading message="Loading statistics..." />}>
+          <Suspense
+            fallback={<SectionLoading message="Loading statistics..." />}
+          >
             <DashboardStats />
           </Suspense>
         </ErrorBoundary>
 
-        <div className="flex items-center justify-between mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-slate-900">Your Properties</h2>
           <AddPropertyButton />
         </div>
@@ -87,9 +93,14 @@ export default function Dashboard() {
         </ErrorBoundary>
 
         {!isLoading && properties.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-slate-400 mb-4">
-              <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="py-12 text-center">
+            <div className="mb-4 text-slate-400">
+              <svg
+                className="mx-auto h-12 w-12"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -98,8 +109,12 @@ export default function Dashboard() {
                 />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-slate-900 mb-2">No properties yet</h3>
-            <p className="text-slate-600 mb-4">Get started by adding your first property to track tenant risk.</p>
+            <h3 className="mb-2 text-lg font-medium text-slate-900">
+              No properties yet
+            </h3>
+            <p className="mb-4 text-slate-600">
+              Get started by adding your first property to track tenant risk.
+            </p>
             <AddPropertyButton />
           </div>
         )}

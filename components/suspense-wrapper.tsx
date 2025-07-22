@@ -11,7 +11,11 @@ interface SuspenseWrapperProps {
   errorFallback?: React.ComponentType<{ error?: Error; reset: () => void }>
 }
 
-export function SuspenseWrapper({ children, fallback, errorFallback }: SuspenseWrapperProps) {
+export function SuspenseWrapper({
+  children,
+  fallback,
+  errorFallback,
+}: SuspenseWrapperProps) {
   return (
     <ErrorBoundary fallback={errorFallback}>
       <Suspense fallback={fallback}>{children}</Suspense>

@@ -1,0 +1,78 @@
+# Supabase Local Development
+.branches
+.temp
+.env
+.env.local
+
+# Supabase Generated Files
+/migrations/.temp
+/migrations/.keep
+/migrations/migrate.lock
+
+# Database dumps and backups
+*.sql.gz
+*.dump
+*.backup
+/dumps/
+/backups/
+
+# Supabase CLI cache
+.supabase/
+
+# Local database files
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+supabase-*.log
+docker-*.log
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+
+# Node modules (if any)
+node_modules/
+
+# Environment and secrets
+.env*
+secrets.toml
+config.local.toml
+
+# Generated documentation
+/docs/generated/
+
+# Test files
+*.test.sql.out
+test-results/
+
+# Supabase Studio exports
+studio-export-*
+
+# Local configuration overrides
+config.override.toml
+
+# Certificate files
+*.pem
+*.crt
+*.key
+
+# Docker volumes data
+/volumes/
+
+# Generated TypeScript types (if you regenerate them frequently)
+# types/database.types.ts
