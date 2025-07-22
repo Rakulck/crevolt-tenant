@@ -1,12 +1,14 @@
 import type { Config } from "tailwindcss"
-import defaultConfig from "shadcn/ui/tailwind.config"
 
 const config: Config = {
-  ...defaultConfig,
   darkMode: ["class", '[data-theme="dark"]'],
-  content: [...defaultConfig.content, "./pages/**/*.{js,ts,jsx,tsx,mdx}", "*.{js,ts,jsx,tsx,mdx}"],
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "*.{js,ts,jsx,tsx,mdx}"
+  ],
   theme: {
-    ...defaultConfig.theme,
     container: {
       center: true,
       padding: "2rem",
@@ -15,9 +17,10 @@ const config: Config = {
       },
     },
     extend: {
-      ...defaultConfig.theme.extend,
       colors: {
-        ...defaultConfig.theme.extend.colors,
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        
         primary: {
           50: "rgb(var(--primary-50) / <alpha-value>)",
           100: "rgb(var(--primary-100) / <alpha-value>)",
@@ -89,6 +92,9 @@ const config: Config = {
           foreground: "hsl(var(--destructive-foreground))",
         },
       },
+      borderColor: {
+        border: 'var(--border-primary)',
+      },
       spacing: {
         xs: "var(--spacing-xs)",
         sm: "var(--spacing-sm)",
@@ -98,7 +104,6 @@ const config: Config = {
         "2xl": "var(--spacing-2xl)",
       },
       borderRadius: {
-        ...defaultConfig.theme.extend.borderRadius,
         xl: "var(--radius-xl)",
         "2xl": "var(--radius-2xl)",
         full: "var(--radius-full)",
@@ -172,7 +177,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [...defaultConfig.plugins, require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate")],
 } satisfies Config
 
 export default config
