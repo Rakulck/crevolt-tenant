@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+
 import { createContext, useContext, useEffect, useState } from "react"
 
 type Theme = "light" | "dark" | "system"
@@ -149,4 +150,4 @@ export function loadCustomTheme() {
   if (savedCustomTheme && customThemes[savedCustomTheme]) {
     applyCustomTheme(savedCustomTheme)
   }
-} 
+}
