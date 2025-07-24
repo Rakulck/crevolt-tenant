@@ -1,6 +1,8 @@
 "use client"
 
 import { CheckCircle, Building2, Users } from "lucide-react"
+import { useRouter } from "next/navigation"
+
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -9,7 +11,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { useRouter } from "next/navigation"
 
 interface PropertySuccessModalProps {
   isOpen: boolean
@@ -56,22 +57,22 @@ export function PropertySuccessModal({
           <Button
             onClick={handleReturnToDashboard}
             variant="outline"
-            className="w-full h-12 bg-transparent"
+            className="h-12 w-full bg-transparent"
           >
-            <Building2 className="h-4 w-4 mr-2" />
+            <Building2 className="mr-2 h-4 w-4" />
             Return to Dashboard
           </Button>
 
           <Button
             onClick={handleAddTenant}
-            className="w-full h-12 bg-[#4F46E5] hover:bg-[#4338CA] text-white"
+            className="h-12 w-full bg-[#4F46E5] text-white hover:bg-[#4338CA]"
           >
-            <Users className="h-4 w-4 mr-2" />
+            <Users className="mr-2 h-4 w-4" />
             Add Tenant Information
           </Button>
         </div>
 
-        <p className="text-xs text-slate-500 text-center mt-4">
+        <p className="mt-4 text-center text-xs text-slate-500">
           You can always add tenant information later from the property details
           page.
         </p>

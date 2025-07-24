@@ -151,7 +151,7 @@ export function applyCustomTheme(themeName: keyof typeof customThemes) {
 
 export function loadCustomTheme() {
   const savedCustomTheme = localStorage.getItem(
-    "tenant-pro-custom-theme"
+    "tenant-pro-custom-theme",
   ) as keyof typeof customThemes
   if (savedCustomTheme && customThemes[savedCustomTheme]) {
     applyCustomTheme(savedCustomTheme)

@@ -1,7 +1,9 @@
 "use client"
 
 import React from "react"
+
 import { AlertTriangle, RefreshCw } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -62,7 +64,7 @@ function DefaultErrorFallback({
   reset: () => void
 }) {
   return (
-    <Card className="w-full max-w-lg mx-auto mt-8">
+    <Card className="mx-auto mt-8 w-full max-w-lg">
       <CardHeader className="text-center">
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
           <AlertTriangle className="h-6 w-6 text-red-600" />
@@ -75,17 +77,17 @@ function DefaultErrorFallback({
           support if the problem persists.
         </CardDescription>
       </CardHeader>
-      <CardContent className="text-center space-y-4">
+      <CardContent className="space-y-4 text-center">
         {process.env.NODE_ENV === "development" && error && (
-          <div className="bg-slate-100 p-3 rounded text-sm text-left">
+          <div className="rounded bg-slate-100 p-3 text-left text-sm">
             <strong>Error:</strong> {error.message}
           </div>
         )}
         <Button
           onClick={reset}
-          className="bg-[#4F46E5] hover:bg-[#4338CA] text-white"
+          className="bg-[#4F46E5] text-white hover:bg-[#4338CA]"
         >
-          <RefreshCw className="h-4 w-4 mr-2" />
+          <RefreshCw className="mr-2 h-4 w-4" />
           Try Again
         </Button>
       </CardContent>

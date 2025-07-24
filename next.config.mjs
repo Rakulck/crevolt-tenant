@@ -11,6 +11,12 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  experimental: {
+    serverActions: {
+      // Increase limit to 5MB to handle profile image uploads
+      bodySizeLimit: "5mb",
+    },
+  },
 }
 
 export default nextConfig

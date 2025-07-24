@@ -53,7 +53,7 @@ export function useGoogleMaps({
     return () => {
       // Cleanup on unmount
       const existingScript = document.querySelector(
-        'script[src*="maps.googleapis.com"]'
+        'script[src*="maps.googleapis.com"]',
       )
       if (existingScript && existingScript.parentNode) {
         existingScript.parentNode.removeChild(existingScript)

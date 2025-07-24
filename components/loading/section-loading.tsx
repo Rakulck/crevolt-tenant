@@ -1,7 +1,8 @@
 "use client"
 
-import { LoadingSpinner } from "./loading-spinner"
 import { Card, CardContent } from "@/components/ui/card"
+
+import { LoadingSpinner } from "./loading-spinner"
 
 interface SectionLoadingProps {
   message?: string
@@ -15,7 +16,7 @@ export function SectionLoading({
   return (
     <Card>
       <CardContent className={`flex items-center justify-center ${height}`}>
-        <div className="text-center space-y-3">
+        <div className="space-y-3 text-center">
           <LoadingSpinner />
           <p className="text-slate-600">{message}</p>
         </div>

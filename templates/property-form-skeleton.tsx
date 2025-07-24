@@ -7,8 +7,8 @@ export function PropertyFormSkeleton() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header Skeleton */}
-      <header className="bg-white border-b border-slate-200 px-6 py-4">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
+      <header className="border-b border-slate-200 bg-white px-6 py-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between">
           <div className="flex items-center space-x-4">
             <Skeleton className="h-8 w-32" />
             <div className="h-6 w-px bg-slate-300" />
@@ -21,22 +21,22 @@ export function PropertyFormSkeleton() {
       </header>
 
       {/* Main Content Skeleton */}
-      <main className="max-w-4xl mx-auto px-6 py-8">
+      <main className="mx-auto max-w-4xl px-6 py-8">
         <Card className="shadow-lg">
           <CardHeader>
             <Skeleton className="h-8 w-48" />
-            <Skeleton className="h-4 w-96 mt-2" />
+            <Skeleton className="mt-2 h-4 w-96" />
           </CardHeader>
           <CardContent>
             <div className="space-y-8">
               {/* Basic Information Section */}
               <div className="space-y-6">
-                <div className="flex items-center space-x-2 mb-4">
+                <div className="mb-4 flex items-center space-x-2">
                   <Skeleton className="h-5 w-5" />
                   <Skeleton className="h-6 w-40" />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="md:col-span-2 space-y-2">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div className="space-y-2 md:col-span-2">
                     <Skeleton className="h-4 w-32" />
                     <Skeleton className="h-11 w-full" />
                   </div>
@@ -51,7 +51,7 @@ export function PropertyFormSkeleton() {
 
               {/* Location Section */}
               <div className="space-y-6">
-                <div className="flex items-center space-x-2 mb-4">
+                <div className="mb-4 flex items-center space-x-2">
                   <Skeleton className="h-5 w-5" />
                   <Skeleton className="h-6 w-24" />
                 </div>
@@ -60,7 +60,7 @@ export function PropertyFormSkeleton() {
                     <Skeleton className="h-4 w-32" />
                     <Skeleton className="h-11 w-full" />
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                     {Array.from({ length: 3 }).map((_, index) => (
                       <div key={index} className="space-y-2">
                         <Skeleton className="h-4 w-16" />
@@ -72,7 +72,7 @@ export function PropertyFormSkeleton() {
               </div>
 
               {/* Form Actions */}
-              <div className="flex items-center justify-end space-x-4 pt-6 border-t border-slate-200">
+              <div className="flex items-center justify-end space-x-4 border-t border-slate-200 pt-6">
                 <Skeleton className="h-10 w-20" />
                 <Skeleton className="h-10 w-32" />
               </div>

@@ -22,7 +22,7 @@ export function LoadingSpinner({
       className={cn(
         "animate-spin rounded-full border-b-2 border-[#4F46E5]",
         sizeClasses[size],
-        className
+        className,
       )}
     />
   )

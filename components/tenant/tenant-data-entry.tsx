@@ -2,13 +2,17 @@
 
 import type React from "react"
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FileText } from "lucide-react"
-import type { TenantData } from "../../types/tenant"
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
 import { TenantTab } from "../tenant-tab"
+
 import { ManualEntryForm } from "./manual-entry-form"
 import { RentRollUpload } from "./rent-roll-upload"
 import { SuccessMessage } from "./success-message"
+
+import type { TenantData } from "../../types/tenant"
 
 interface TenantDataEntryProps {
   savedTenants: TenantData[]
@@ -43,7 +47,7 @@ export function TenantDataEntry({
 }: TenantDataEntryProps) {
   return (
     <div className="space-y-6">
-      <div className="flex items-center space-x-2 mb-4">
+      <div className="mb-4 flex items-center space-x-2">
         <FileText className="h-5 w-5 text-slate-600" />
         <h3 className="text-lg font-semibold text-slate-900">
           Tenant Data Entry
@@ -56,7 +60,7 @@ export function TenantDataEntry({
           <h4 className="text-sm font-medium text-slate-700">
             Added Tenants ({savedTenants.length})
           </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {savedTenants.map((tenant) => (
               <TenantTab
                 key={tenant.id}
@@ -75,7 +79,7 @@ export function TenantDataEntry({
           onDataEntryMethodChange(value as "manual" | "upload")
         }
       >
-        <div className="text-center mb-4">
+        <div className="mb-4 text-center">
           <p className="text-sm text-slate-600">
             Choose your preferred method for entering tenant information
           </p>

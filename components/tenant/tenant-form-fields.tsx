@@ -9,14 +9,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import type { TenantFormProps } from "../../types/tenant"
+
 import {
   EMPLOYMENT_STATUS_OPTIONS,
   LEASE_TYPE_OPTIONS,
-  UTILITY_INCLUSION_OPTIONS,
   PET_OWNERSHIP_OPTIONS,
+  UTILITY_INCLUSION_OPTIONS,
 } from "../../constants/tenant-constants"
 import { calculateAnnualIncome } from "../../utils/tenant-utils"
+
+import type { TenantFormProps } from "../../types/tenant"
 
 export function TenantFormFields({
   tenant,
@@ -29,7 +31,7 @@ export function TenantFormFields({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div className="space-y-2">
         <Label htmlFor="tenant-name">Tenant Name</Label>
         <Input
@@ -181,6 +183,26 @@ export function TenantFormFields({
             ))}
           </SelectContent>
         </Select>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="lease-start-date">Lease Start Date</Label>
+        <Input
+          id="lease-start-date"
+          type="date"
+          value={tenant.leaseStartDate}
+          onChange={(e) => onTenantChange("leaseStartDate", e.target.value)}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="lease-end-date">Lease End Date</Label>
+        <Input
+          id="lease-end-date"
+          type="date"
+          value={tenant.leaseEndDate}
+          onChange={(e) => onTenantChange("leaseEndDate", e.target.value)}
+        />
       </div>
     </div>
   )

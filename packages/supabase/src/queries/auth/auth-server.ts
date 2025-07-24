@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 
-import { createServerClientFromEnv } from "../../../../../clients/server"
+import { createServerClientFromEnv } from "../../clients/server"
 
 // Types for better type safety
 type AuthResult = {
@@ -49,7 +49,7 @@ export async function signUpWithDetails(userData: {
     const validatedData = signUpSchema.parse(userData)
     console.log("Validation passed")
 
-    const supabase = createServerClientFromEnv()
+    const supabase = await createServerClientFromEnv()
 
     // Sign up the user with metadata for the trigger
     console.log("Creating auth user with metadata...")
@@ -85,7 +85,7 @@ export async function signUpWithDetails(userData: {
 
     // The database trigger will automatically create the user profile
     console.log(
-      "User profile will be created automatically by database trigger"
+      "User profile will be created automatically by database trigger",
     )
     console.log("=== Sign Up Process Completed ===")
 
@@ -108,38 +108,73 @@ export async function signUpWithDetails(userData: {
 // Sign in with email and password
 export async function signIn(formData: FormData): Promise<AuthResult> {
   try {
+    console.log("=== Sign In Process Started ===")
+    console.log("FormData received:", {
+      email: formData.get("email"),
+      password: "[REDACTED]",
+      formDataKeys: Array.from(formData.keys()),
+    })
+
     const validatedData = signInSchema.parse({
       email: formData.get("email"),
       password: formData.get("password"),
     })
+    console.log("Input validation passed:", { email: validatedData.email })
 
-    const supabase = createServerClientFromEnv()
+    console.log("Creating Supabase client...")
+    const supabase = await createServerClientFromEnv()
+    console.log("Supabase client created successfully")
 
+    console.log("Attempting to sign in with Supabase...")
     const { data, error } = await supabase.auth.signInWithPassword({
       email: validatedData.email,
       password: validatedData.password,
     })
 
     if (error) {
+      console.error("Supabase auth error:", error)
       throw error
     }
 
+    console.log("Supabase sign in successful:", {
+      userId: data.user?.id,
+      email: data.user?.email,
+      emailConfirmed: data.user?.email_confirmed_at,
+      role: data.user?.role,
+      sessionId: data.session?.access_token ? "Present" : "Missing",
+    })
+
     // Update last login timestamp
     if (data.user) {
-      await supabase
-        .from("user_profiles")
-        .update({ last_login_at: new Date().toISOString() })
-        .eq("id", data.user.id)
+      console.log("Updating last login timestamp...")
+      try {
+        const updateResult = await supabase
+          .from("user_profiles")
+          .update({ last_login_at: new Date().toISOString() })
+          .eq("id", data.user.id)
+
+        console.log("Last login update result:", updateResult)
+      } catch (updateError) {
+        console.warn("Failed to update last login timestamp:", updateError)
+        // Don't fail the login if this update fails
+      }
     }
 
+    console.log("Revalidating path...")
     revalidatePath("/")
 
+    console.log("=== Sign In Process Completed Successfully ===")
     return {
       success: true,
       message: "Signed in successfully",
     }
   } catch (error) {
-    console.error("Sign in error:", error)
+    console.error("=== Sign In Process Failed ===")
+    console.error("Sign in error details:", {
+      message: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined,
+      type: typeof error,
+    })
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to sign in",
@@ -150,7 +185,7 @@ export async function signIn(formData: FormData): Promise<AuthResult> {
 // Sign out
 export async function signOut(): Promise<AuthResult> {
   try {
-    const supabase = createServerClientFromEnv()
+    const supabase = await createServerClientFromEnv()
     const { error } = await supabase.auth.signOut()
 
     if (error) {
@@ -180,7 +215,7 @@ export async function resetPassword(formData: FormData): Promise<AuthResult> {
       throw new Error("Email is required")
     }
 
-    const supabase = createServerClientFromEnv()
+    const supabase = await createServerClientFromEnv()
     const { error } = await supabase.auth.resetPasswordForEmail(email)
 
     if (error) {
@@ -208,7 +243,7 @@ export async function updatePassword(formData: FormData): Promise<AuthResult> {
       password: formData.get("password"),
     })
 
-    const supabase = createServerClientFromEnv()
+    const supabase = await createServerClientFromEnv()
     const { error } = await supabase.auth.updateUser({
       password: validatedData.password,
     })

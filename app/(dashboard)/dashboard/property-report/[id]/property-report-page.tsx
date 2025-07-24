@@ -1,7 +1,8 @@
 "use client"
+import { useEffect, useState } from "react"
+
 import { ArrowLeft, Building2, Download, FileText, Share } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -223,7 +224,8 @@ export default function PropertyReportPage({
               <div className="text-center">
                 <div className="text-3xl font-bold text-slate-900">
                   {Math.round(
-                    (propertyData.occupiedUnits / propertyData.totalUnits) * 100
+                    (propertyData.occupiedUnits / propertyData.totalUnits) *
+                      100,
                   )}
                   %
                 </div>

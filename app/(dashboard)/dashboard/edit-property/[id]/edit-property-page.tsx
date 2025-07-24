@@ -1,4 +1,17 @@
 "use client"
+import { useEffect, useState } from "react"
+
+import {
+  ArrowLeft,
+  Building2,
+  Calendar,
+  Hash,
+  MapPin,
+  Save,
+  Users,
+} from "lucide-react"
+import { useRouter } from "next/navigation"
+
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -18,16 +31,18 @@ import {
 } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
-  ArrowLeft,
-  Building2,
-  Calendar,
-  Hash,
-  MapPin,
-  Save,
-  Users,
-} from "lucide-react"
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+  getPropertyById,
+  updateProperty,
+  type UpdatePropertyData,
+} from "@/packages/supabase/src/queries/property"
+import {
+  deleteTenant,
+  getPropertyTenants,
+  updateTenant,
+  type Tenant,
+  type UpdateTenantData,
+} from "@/packages/supabase/src/queries/tenant"
+
 import { AddressAutocomplete } from "../../../../../components/address-autocomplete"
 import { GoogleMapsScript } from "../../../../../components/google-maps-script"
 
@@ -45,17 +60,6 @@ interface PropertyData {
   defaultRisk: number
   tenantCount: number
   lastUpdated: string
-}
-
-interface TenantInfo {
-  id: string
-  name: string
-  unitNumber: string
-  monthlyRent: string
-  leaseStart: string
-  leaseEnd: string
-  status: string
-  riskScore: number
 }
 
 interface EditPropertyPageProps {
@@ -86,51 +90,51 @@ export default function EditPropertyPage({
     lastUpdated: "",
   })
 
-  const [tenants, setTenants] = useState<TenantInfo[]>([
-    {
-      id: "1",
-      name: "John Smith",
-      unitNumber: "4B",
-      monthlyRent: "$2,500",
-      leaseStart: "2024-01-15",
-      leaseEnd: "2024-12-15",
-      status: "Active",
-      riskScore: 12,
-    },
-    {
-      id: "2",
-      name: "Sarah Johnson",
-      unitNumber: "3A",
-      monthlyRent: "$2,200",
-      leaseStart: "2023-11-01",
-      leaseEnd: "2024-10-31",
-      status: "Active",
-      riskScore: 8,
-    },
-  ])
+  const [tenants, setTenants] = useState<Tenant[]>([])
+  const [loadingTenants, setLoadingTenants] = useState(true)
 
   useEffect(() => {
-    // Simulate loading property data
-    setTimeout(() => {
-      // In a real app, this would fetch from API using propertyId
-      setPropertyData({
-        id: propertyId,
-        name: "Sunset Apartments - Unit 4B",
-        address: "1234 Sunset Blvd",
-        city: "Los Angeles",
-        state: "CA",
-        zipCode: "90028",
-        numberOfUnits: "24",
-        yearBuilt: "2018",
-        propertyType: "apartment",
-        description: "Modern apartment complex with amenities",
-        defaultRisk: 12,
-        tenantCount: 2,
-        lastUpdated: "2 days ago",
-      })
-      setIsLoading(false)
-    }, 1000)
-  }, [propertyId])
+    async function loadPropertyData() {
+      try {
+        setIsLoading(true)
+
+        const property = await getPropertyById(propertyId)
+
+        if (property) {
+          setPropertyData({
+            id: property.id,
+            name: property.name,
+            address: property.address.street_address || "",
+            city: property.address.city || "",
+            state: property.address.state || "",
+            zipCode: property.address.zip_code || "",
+            numberOfUnits: property.total_units.toString(),
+            yearBuilt: property.year_built?.toString() || "",
+            propertyType: property.property_type,
+            description: property.description || "",
+            defaultRisk: 0, // TODO: Calculate from tenants
+            tenantCount: 0, // TODO: Get from tenants
+            lastUpdated: new Date(property.updated_at).toLocaleDateString(),
+          })
+
+          // Load tenants for this property
+          const propertyTenants = await getPropertyTenants(propertyId)
+          setTenants(propertyTenants)
+          setLoadingTenants(false)
+        } else {
+          throw new Error("Property not found")
+        }
+      } catch (error) {
+        console.error("Failed to load property:", error)
+        alert("Failed to load property. Redirecting to dashboard...")
+        router.push("/dashboard")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadPropertyData()
+  }, [propertyId, router])
 
   const handleInputChange = (field: keyof PropertyData, value: string) => {
     setPropertyData((prev) => ({ ...prev, [field]: value }))
@@ -138,33 +142,112 @@ export default function EditPropertyPage({
 
   const handleTenantChange = (
     tenantId: string,
-    field: keyof TenantInfo,
-    value: string | number
+    field: keyof Tenant,
+    value: string | number,
   ) => {
     setTenants((prev) =>
       prev.map((tenant) =>
-        tenant.id === tenantId ? { ...tenant, [field]: value } : tenant
-      )
+        tenant.id === tenantId ? { ...tenant, [field]: value } : tenant,
+      ),
     )
   }
 
-  const handleRemoveTenant = (tenantId: string) => {
-    if (confirm("Are you sure you want to remove this tenant?")) {
-      setTenants((prev) => prev.filter((tenant) => tenant.id !== tenantId))
+  const handleRemoveTenant = async (tenantId: string) => {
+    const tenant = tenants.find((t) => t.id === tenantId)
+
+    if (
+      confirm(
+        `Are you sure you want to remove tenant "${tenant?.tenant_name}"? This action cannot be undone.`,
+      )
+    ) {
+      try {
+        const result = await deleteTenant(tenantId)
+
+        if (result.success) {
+          // Remove from local state
+          setTenants((prev) => prev.filter((tenant) => tenant.id !== tenantId))
+          alert("Tenant removed successfully!")
+        } else {
+          throw new Error(result.error || "Failed to remove tenant")
+        }
+      } catch (error) {
+        console.error("Delete tenant error:", error)
+        alert(
+          `Failed to remove tenant: ${error instanceof Error ? error.message : "Unknown error"}`,
+        )
+      }
     }
   }
 
   const handleSave = async () => {
     setIsSaving(true)
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsSaving(false)
-      // In a real app, this would save both property and tenant data
-      console.log("Saving property:", propertyData)
-      console.log("Saving tenants:", tenants)
+    try {
+      const updateData: UpdatePropertyData = {
+        id: propertyData.id,
+        name: propertyData.name,
+        property_type: propertyData.propertyType as
+          | "single_family"
+          | "duplex"
+          | "triplex"
+          | "fourplex"
+          | "apartment_complex"
+          | "condominium"
+          | "townhouse"
+          | "mixed_use"
+          | "other",
+        total_units: parseInt(propertyData.numberOfUnits) || 1,
+        year_built: propertyData.yearBuilt
+          ? parseInt(propertyData.yearBuilt)
+          : undefined,
+        description: propertyData.description || undefined,
+        address: {
+          street_address: propertyData.address,
+          city: propertyData.city,
+          state: propertyData.state || undefined,
+          zip_code: propertyData.zipCode || undefined,
+          country: "United States",
+        },
+      }
+
+      const propertyResult = await updateProperty(updateData)
+
+      if (!propertyResult.success) {
+        throw new Error(propertyResult.error || "Failed to update property")
+      }
+
+      // Update all tenant data
+      const tenantUpdatePromises = tenants.map(async (tenant) => {
+        const tenantUpdateData: UpdateTenantData = {
+          id: tenant.id,
+          tenant_name: tenant.tenant_name || "",
+          unit_number: tenant.unit_number || "",
+          monthly_rent: tenant.monthly_rent || 0,
+          lease_start_date: tenant.lease_start_date || undefined,
+          lease_end_date: tenant.lease_end_date || undefined,
+        }
+
+        const tenantResult = await updateTenant(tenantUpdateData)
+        if (!tenantResult.success) {
+          throw new Error(
+            `Failed to update tenant ${tenant.tenant_name}: ${tenantResult.error}`,
+          )
+        }
+        return tenantResult
+      })
+
+      await Promise.all(tenantUpdatePromises)
+
       alert("Property and tenant information updated successfully!")
-    }, 1500)
+      router.push("/dashboard")
+    } catch (error) {
+      console.error("Save property error:", error)
+      alert(
+        `Failed to save property: ${error instanceof Error ? error.message : "Unknown error"}`,
+      )
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const getRiskColor = (risk: number) => {
@@ -188,9 +271,9 @@ export default function EditPropertyPage({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#4F46E5] mx-auto mb-4" />
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-[#4F46E5]" />
           <p className="text-slate-600">Loading property details...</p>
         </div>
       </div>
@@ -202,8 +285,8 @@ export default function EditPropertyPage({
       <GoogleMapsScript />
       <div className="min-h-screen bg-slate-50">
         {/* Header */}
-        <header className="bg-white border-b border-slate-200 px-6 py-4">
-          <div className="flex items-center justify-between max-w-7xl mx-auto">
+        <header className="border-b border-slate-200 bg-white px-6 py-4">
+          <div className="mx-auto flex max-w-7xl items-center justify-between">
             <div className="flex items-center space-x-4">
               <Button
                 variant="ghost"
@@ -224,16 +307,16 @@ export default function EditPropertyPage({
             <Button
               onClick={handleSave}
               disabled={isSaving}
-              className="bg-[#4F46E5] hover:bg-[#4338CA] text-white"
+              className="bg-[#4F46E5] text-white hover:bg-[#4338CA]"
             >
               {isSaving ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white" />
                   Saving...
                 </>
               ) : (
                 <>
-                  <Save className="h-4 w-4 mr-2" />
+                  <Save className="mr-2 h-4 w-4" />
                   Save Changes
                 </>
               )}
@@ -242,13 +325,13 @@ export default function EditPropertyPage({
         </header>
 
         {/* Main Content */}
-        <main className="max-w-7xl mx-auto px-6 py-8">
+        <main className="mx-auto max-w-7xl px-6 py-8">
           <Tabs
             value={activeTab}
             onValueChange={setActiveTab}
             className="space-y-6"
           >
-            <TabsList className="grid w-full grid-cols-2 max-w-md">
+            <TabsList className="grid w-full max-w-md grid-cols-2">
               <TabsTrigger value="property">Property Details</TabsTrigger>
               <TabsTrigger value="tenants">Tenant Information</TabsTrigger>
             </TabsList>
@@ -267,15 +350,15 @@ export default function EditPropertyPage({
                 <CardContent className="space-y-8">
                   {/* Basic Information */}
                   <div className="space-y-6">
-                    <div className="flex items-center space-x-2 mb-4">
+                    <div className="mb-4 flex items-center space-x-2">
                       <Building2 className="h-5 w-5 text-slate-600" />
                       <h3 className="text-lg font-semibold text-slate-900">
                         Basic Information
                       </h3>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="md:col-span-2 space-y-2">
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                      <div className="space-y-2 md:col-span-2">
                         <Label
                           htmlFor="property-name"
                           className="text-sm font-medium"
@@ -311,19 +394,21 @@ export default function EditPropertyPage({
                             <SelectValue placeholder="Select property type" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="apartment">
-                              Apartment Complex
-                            </SelectItem>
-                            <SelectItem value="single-family">
+                            <SelectItem value="single_family">
                               Single Family Home
                             </SelectItem>
                             <SelectItem value="duplex">Duplex</SelectItem>
-                            <SelectItem value="townhouse">Townhouse</SelectItem>
-                            <SelectItem value="condo">Condominium</SelectItem>
-                            <SelectItem value="commercial">
-                              Commercial Property
+                            <SelectItem value="triplex">Triplex</SelectItem>
+                            <SelectItem value="fourplex">Fourplex</SelectItem>
+                            <SelectItem value="apartment">Apartment</SelectItem>
+                            <SelectItem value="apartment_complex">
+                              Apartment Complex
                             </SelectItem>
-                            <SelectItem value="mixed-use">Mixed Use</SelectItem>
+                            <SelectItem value="condominium">
+                              Condominium
+                            </SelectItem>
+                            <SelectItem value="townhouse">Townhouse</SelectItem>
+                            <SelectItem value="mixed_use">Mixed Use</SelectItem>
                             <SelectItem value="other">Other</SelectItem>
                           </SelectContent>
                         </Select>
@@ -337,7 +422,7 @@ export default function EditPropertyPage({
                           Number of Units *
                         </Label>
                         <div className="relative">
-                          <Hash className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                          <Hash className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-slate-400" />
                           <Input
                             id="number-of-units"
                             type="number"
@@ -357,7 +442,7 @@ export default function EditPropertyPage({
 
                   {/* Location Information */}
                   <div className="space-y-6">
-                    <div className="flex items-center space-x-2 mb-4">
+                    <div className="mb-4 flex items-center space-x-2">
                       <MapPin className="h-5 w-5 text-slate-600" />
                       <h3 className="text-lg font-semibold text-slate-900">
                         Location
@@ -393,7 +478,7 @@ export default function EditPropertyPage({
                         />
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                         <div className="space-y-2">
                           <Label htmlFor="city" className="text-sm font-medium">
                             City *
@@ -453,7 +538,7 @@ export default function EditPropertyPage({
 
                   {/* Additional Information */}
                   <div className="space-y-6">
-                    <div className="flex items-center space-x-2 mb-4">
+                    <div className="mb-4 flex items-center space-x-2">
                       <Calendar className="h-5 w-5 text-slate-600" />
                       <h3 className="text-lg font-semibold text-slate-900">
                         Additional Details
@@ -504,23 +589,28 @@ export default function EditPropertyPage({
                     <Button
                       onClick={() =>
                         router.push(
-                          `/dashboard/add-tenant?propertyId=${propertyId}`
+                          `/dashboard/add-tenant?propertyId=${propertyId}`,
                         )
                       }
-                      className="bg-[#4F46E5] hover:bg-[#4338CA] text-white"
+                      className="bg-[#4F46E5] text-white hover:bg-[#4338CA]"
                     >
-                      <Users className="h-4 w-4 mr-2" />
+                      <Users className="mr-2 h-4 w-4" />
                       Add Tenant
                     </Button>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  {tenants.length > 0 ? (
+                  {loadingTenants ? (
+                    <div className="py-12 text-center">
+                      <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-[#4F46E5]" />
+                      <p className="text-slate-600">Loading tenants...</p>
+                    </div>
+                  ) : tenants.length > 0 ? (
                     <div className="space-y-4">
-                      {tenants.map((tenant, index) => (
+                      {tenants.map((tenant, _index) => (
                         <Card key={tenant.id} className="border-slate-200">
                           <CardContent className="p-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                               <div className="space-y-2">
                                 <Label
                                   htmlFor={`tenant-name-${tenant.id}`}
@@ -530,12 +620,12 @@ export default function EditPropertyPage({
                                 </Label>
                                 <Input
                                   id={`tenant-name-${tenant.id}`}
-                                  value={tenant.name}
+                                  value={tenant.tenant_name || ""}
                                   onChange={(e) =>
                                     handleTenantChange(
                                       tenant.id,
-                                      "name",
-                                      e.target.value
+                                      "tenant_name",
+                                      e.target.value,
                                     )
                                   }
                                   className="h-10"
@@ -551,12 +641,12 @@ export default function EditPropertyPage({
                                 </Label>
                                 <Input
                                   id={`unit-number-${tenant.id}`}
-                                  value={tenant.unitNumber}
+                                  value={tenant.unit_number || ""}
                                   onChange={(e) =>
                                     handleTenantChange(
                                       tenant.id,
-                                      "unitNumber",
-                                      e.target.value
+                                      "unit_number",
+                                      e.target.value,
                                     )
                                   }
                                   className="h-10"
@@ -572,15 +662,16 @@ export default function EditPropertyPage({
                                 </Label>
                                 <Input
                                   id={`monthly-rent-${tenant.id}`}
-                                  value={tenant.monthlyRent}
+                                  type="number"
+                                  value={tenant.monthly_rent || ""}
                                   onChange={(e) =>
                                     handleTenantChange(
                                       tenant.id,
-                                      "monthlyRent",
-                                      e.target.value
+                                      "monthly_rent",
+                                      parseFloat(e.target.value) || 0,
                                     )
                                   }
-                                  placeholder="$2,500"
+                                  placeholder="2500"
                                   className="h-10"
                                 />
                               </div>
@@ -595,12 +686,12 @@ export default function EditPropertyPage({
                                 <Input
                                   id={`lease-start-${tenant.id}`}
                                   type="date"
-                                  value={tenant.leaseStart}
+                                  value={tenant.lease_start_date || ""}
                                   onChange={(e) =>
                                     handleTenantChange(
                                       tenant.id,
-                                      "leaseStart",
-                                      e.target.value
+                                      "lease_start_date",
+                                      e.target.value,
                                     )
                                   }
                                   className="h-10"
@@ -617,12 +708,12 @@ export default function EditPropertyPage({
                                 <Input
                                   id={`lease-end-${tenant.id}`}
                                   type="date"
-                                  value={tenant.leaseEnd}
+                                  value={tenant.lease_end_date || ""}
                                   onChange={(e) =>
                                     handleTenantChange(
                                       tenant.id,
-                                      "leaseEnd",
-                                      e.target.value
+                                      "lease_end_date",
+                                      e.target.value,
                                     )
                                   }
                                   className="h-10"
@@ -637,12 +728,12 @@ export default function EditPropertyPage({
                                   Status
                                 </Label>
                                 <Select
-                                  value={tenant.status}
+                                  value={tenant.tenant_status || "active"}
                                   onValueChange={(value) =>
                                     handleTenantChange(
                                       tenant.id,
-                                      "status",
-                                      value
+                                      "tenant_status",
+                                      value,
                                     )
                                   }
                                 >
@@ -650,36 +741,49 @@ export default function EditPropertyPage({
                                     <SelectValue placeholder="Select status" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="Active">
+                                    <SelectItem value="active">
                                       Active
                                     </SelectItem>
-                                    <SelectItem value="Pending">
-                                      Pending
+                                    <SelectItem value="notice_given">
+                                      Notice Given
                                     </SelectItem>
-                                    <SelectItem value="Expired">
-                                      Expired
+                                    <SelectItem value="vacated">
+                                      Vacated
                                     </SelectItem>
-                                    <SelectItem value="Terminated">
-                                      Terminated
+                                    <SelectItem value="evicted">
+                                      Evicted
+                                    </SelectItem>
+                                    <SelectItem value="lease_expired">
+                                      Lease Expired
                                     </SelectItem>
                                   </SelectContent>
                                 </Select>
                               </div>
                             </div>
 
-                            <div className="flex items-center justify-between mt-6 pt-4 border-t border-slate-200">
+                            <div className="mt-6 flex items-center justify-between border-t border-slate-200 pt-4">
                               <div className="flex items-center space-x-4">
                                 <div
-                                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(tenant.status)}`}
+                                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(tenant.tenant_status || "active")}`}
                                 >
-                                  {tenant.status}
+                                  {tenant.tenant_status
+                                    ?.replace("_", " ")
+                                    .toUpperCase() || "ACTIVE"}
                                 </div>
                                 <span className="text-sm text-slate-600">
-                                  Risk Score:{" "}
+                                  Risk Level:{" "}
                                   <span
-                                    className={`font-medium ${getRiskColor(tenant.riskScore).split(" ")[0]}`}
+                                    className={`font-medium capitalize ${
+                                      tenant.current_risk_level === "low"
+                                        ? "text-green-600"
+                                        : tenant.current_risk_level === "medium"
+                                          ? "text-yellow-600"
+                                          : tenant.current_risk_level === "high"
+                                            ? "text-red-600"
+                                            : "text-gray-600"
+                                    }`}
                                   >
-                                    {tenant.riskScore}%
+                                    {tenant.current_risk_level || "Unknown"}
                                   </span>
                                 </span>
                               </div>
@@ -688,7 +792,7 @@ export default function EditPropertyPage({
                                   variant="outline"
                                   size="sm"
                                   onClick={() => handleRemoveTenant(tenant.id)}
-                                  className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+                                  className="border-red-200 text-red-600 hover:border-red-300 hover:bg-red-50"
                                 >
                                   Remove Tenant
                                 </Button>
@@ -699,24 +803,24 @@ export default function EditPropertyPage({
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center py-12">
-                      <Users className="mx-auto h-12 w-12 text-slate-400 mb-4" />
-                      <h3 className="text-lg font-medium text-slate-900 mb-2">
+                    <div className="py-12 text-center">
+                      <Users className="mx-auto mb-4 h-12 w-12 text-slate-400" />
+                      <h3 className="mb-2 text-lg font-medium text-slate-900">
                         No tenants yet
                       </h3>
-                      <p className="text-slate-600 mb-4">
+                      <p className="mb-4 text-slate-600">
                         Add tenants to start tracking their information and risk
                         scores.
                       </p>
                       <Button
                         onClick={() =>
                           router.push(
-                            `/dashboard/add-tenant?propertyId=${propertyId}`
+                            `/dashboard/add-tenant?propertyId=${propertyId}`,
                           )
                         }
-                        className="bg-[#4F46E5] hover:bg-[#4338CA] text-white"
+                        className="bg-[#4F46E5] text-white hover:bg-[#4338CA]"
                       >
-                        <Users className="h-4 w-4 mr-2" />
+                        <Users className="mr-2 h-4 w-4" />
                         Add First Tenant
                       </Button>
                     </div>

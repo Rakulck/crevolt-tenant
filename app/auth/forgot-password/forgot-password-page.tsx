@@ -1,11 +1,11 @@
 "use client"
 
-import type React from "react"
-import { useState } from "react"
-import { ArrowLeft, Building2, Mail, Send, CheckCircle } from "lucide-react"
+import React, { useState } from "react"
+
+import { ArrowLeft, Building2, CheckCircle, Mail, Send } from "lucide-react"
+import { useRouter } from "next/navigation"
+
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
   Card,
   CardContent,
@@ -13,7 +13,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { useRouter } from "next/navigation"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 export default function ForgotPasswordPage() {
   const router = useRouter()
@@ -25,11 +26,28 @@ export default function ForgotPasswordPage() {
     e.preventDefault()
     setIsLoading(true)
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false)
+    const formData = new FormData()
+    formData.append("email", email)
+
+    try {
+      const { resetPassword } = await import(
+        "../../../packages/supabase/src/queries/auth"
+      )
+      const result = await resetPassword(formData)
+
+      if (result.success) {
+        setIsEmailSent(true)
+      } else {
+        // Show error but don't reveal if email exists for security
+        setIsEmailSent(true)
+      }
+    } catch (error) {
+      console.error("Reset password error:", error)
+      // Show success message anyway for security
       setIsEmailSent(true)
-    }, 2000)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleResendEmail = () => {
@@ -44,22 +62,22 @@ export default function ForgotPasswordPage() {
 
   if (isEmailSent) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
         <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center mb-4">
+          <div className="mb-8 text-center">
+            <div className="mb-4 flex items-center justify-center">
               <Building2 className="h-12 w-12 text-emerald-600" />
             </div>
             <h1 className="text-3xl font-bold text-slate-900">
               TenantPro Analytics
             </h1>
-            <p className="text-slate-600 mt-2">
+            <p className="mt-2 text-slate-600">
               Professional Tenant Analysis Platform
             </p>
           </div>
 
-          <Card className="shadow-xl border-0">
-            <CardHeader className="text-center space-y-1 pb-4">
+          <Card className="border-0 shadow-xl">
+            <CardHeader className="space-y-1 pb-4 text-center">
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
                 <CheckCircle className="h-6 w-6 text-green-600" />
               </div>
@@ -71,11 +89,11 @@ export default function ForgotPasswordPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="bg-slate-50 p-4 rounded-lg text-center">
-                <p className="text-sm text-slate-700 mb-2">
+              <div className="rounded-lg bg-slate-50 p-4 text-center">
+                <p className="mb-2 text-sm text-slate-700">
                   <strong>Email sent to:</strong>
                 </p>
-                <p className="text-slate-900 font-medium">{email}</p>
+                <p className="font-medium text-slate-900">{email}</p>
               </div>
 
               <div className="space-y-4">
@@ -87,16 +105,16 @@ export default function ForgotPasswordPage() {
                   onClick={handleResendEmail}
                   disabled={isLoading}
                   variant="outline"
-                  className="w-full h-11 bg-transparent"
+                  className="h-11 w-full bg-transparent"
                 >
                   {isLoading ? (
                     <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#4F46E5] mr-2" />
+                      <div className="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-[#4F46E5]" />
                       Sending...
                     </>
                   ) : (
                     <>
-                      <Send className="h-4 w-4 mr-2" />
+                      <Send className="mr-2 h-4 w-4" />
                       Resend Email
                     </>
                   )}
@@ -105,20 +123,20 @@ export default function ForgotPasswordPage() {
                 <Button
                   onClick={() => router.push("/auth")}
                   variant="ghost"
-                  className="w-full h-11"
+                  className="h-11 w-full"
                 >
-                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  <ArrowLeft className="mr-2 h-4 w-4" />
                   Back to Login
                 </Button>
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
                 <div className="flex items-start space-x-3">
                   <div className="flex-shrink-0">
-                    <Mail className="h-5 w-5 text-blue-600 mt-0.5" />
+                    <Mail className="mt-0.5 h-5 w-5 text-blue-600" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-blue-900 mb-1">
+                    <h4 className="mb-1 text-sm font-medium text-blue-900">
                       Next Steps
                     </h4>
                     <p className="text-sm text-blue-700">
@@ -131,7 +149,7 @@ export default function ForgotPasswordPage() {
             </CardContent>
           </Card>
 
-          <div className="text-center mt-6">
+          <div className="mt-6 text-center">
             <p className="text-sm text-slate-500">
               Need help?{" "}
               <Button
@@ -148,23 +166,23 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
+        <div className="mb-8 text-center">
+          <div className="mb-4 flex items-center justify-center">
             <Building2 className="h-12 w-12 text-emerald-600" />
           </div>
           <h1 className="text-3xl font-bold text-slate-900">
             TenantPro Analytics
           </h1>
-          <p className="text-slate-600 mt-2">
+          <p className="mt-2 text-slate-600">
             Professional Tenant Analysis Platform
           </p>
         </div>
 
-        <Card className="shadow-xl border-0">
+        <Card className="border-0 shadow-xl">
           <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-2xl text-center text-slate-900">
+            <CardTitle className="text-center text-2xl text-slate-900">
               Forgot Password?
             </CardTitle>
             <CardDescription className="text-center text-slate-600">
@@ -177,7 +195,7 @@ export default function ForgotPasswordPage() {
               <div className="space-y-2">
                 <Label htmlFor="email">Email Address</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-slate-400" />
                   <Input
                     id="email"
                     type="email"
@@ -193,16 +211,16 @@ export default function ForgotPasswordPage() {
               <Button
                 type="submit"
                 disabled={isLoading || !email}
-                className="w-full h-11 bg-[#4F46E5] hover:bg-[#4338CA] text-white"
+                className="h-11 w-full bg-[#4F46E5] text-white hover:bg-[#4338CA]"
               >
                 {isLoading ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white" />
                     Sending Code...
                   </>
                 ) : (
                   <>
-                    <Send className="h-4 w-4 mr-2" />
+                    <Send className="mr-2 h-4 w-4" />
                     Send Verification Code
                   </>
                 )}
@@ -212,16 +230,16 @@ export default function ForgotPasswordPage() {
                 type="button"
                 onClick={() => router.push("/auth")}
                 variant="ghost"
-                className="w-full h-11"
+                className="h-11 w-full"
               >
-                <ArrowLeft className="h-4 w-4 mr-2" />
+                <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Login
               </Button>
             </form>
           </CardContent>
         </Card>
 
-        <div className="text-center mt-6">
+        <div className="mt-6 text-center">
           <p className="text-sm text-slate-500">
             Remember your password?{" "}
             <Button

@@ -4,6 +4,7 @@ declare global {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 declare namespace google {
   namespace maps {
     class Map {

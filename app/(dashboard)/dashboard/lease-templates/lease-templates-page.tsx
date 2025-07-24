@@ -1,18 +1,18 @@
 "use client"
 
-import type React from "react"
-import { useState } from "react"
+import React, { useState } from "react"
+
 import {
   ArrowLeft,
-  FileText,
-  Upload,
-  Trash2,
   Download,
   Eye,
+  FileText,
+  Trash2,
+  Upload,
 } from "lucide-react"
+import { useRouter } from "next/navigation"
+
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
   Card,
   CardContent,
@@ -20,7 +20,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { useRouter } from "next/navigation"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 interface LeaseTemplate {
   id: string
@@ -83,7 +84,7 @@ export default function LeaseTemplatesPage() {
 
     // Reset file input
     const fileInput = document.getElementById(
-      "template-upload"
+      "template-upload",
     ) as HTMLInputElement
     if (fileInput) {
       fileInput.value = ""
@@ -92,7 +93,7 @@ export default function LeaseTemplatesPage() {
 
   const handleDeleteTemplate = (templateId: string) => {
     setTemplates((prev) =>
-      prev.filter((template) => template.id !== templateId)
+      prev.filter((template) => template.id !== templateId),
     )
   }
 
@@ -109,8 +110,8 @@ export default function LeaseTemplatesPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 px-6 py-4">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
+      <header className="border-b border-slate-200 bg-white px-6 py-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button
               variant="ghost"
@@ -132,7 +133,7 @@ export default function LeaseTemplatesPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-6 py-8">
+      <main className="mx-auto max-w-6xl px-6 py-8">
         {/* Upload New Template Section */}
         <Card className="mb-8">
           <CardHeader>
@@ -149,7 +150,7 @@ export default function LeaseTemplatesPage() {
               <div className="flex-1">
                 <Label
                   htmlFor="template-upload"
-                  className="text-sm font-medium text-slate-700 mb-2 block"
+                  className="mb-2 block text-sm font-medium text-slate-700"
                 >
                   Choose Template File
                 </Label>
@@ -160,21 +161,21 @@ export default function LeaseTemplatesPage() {
                   onChange={handleFileUpload}
                   className="h-11"
                 />
-                <p className="text-sm text-slate-500 mt-1">
+                <p className="mt-1 text-sm text-slate-500">
                   Accepted formats: PDF, DOC, DOCX
                 </p>
               </div>
               <Button
                 onClick={handleUploadTemplate}
                 disabled={!selectedFile}
-                className="bg-[#4F46E5] hover:bg-[#4338CA] text-white h-11 px-6"
+                className="h-11 bg-[#4F46E5] px-6 text-white hover:bg-[#4338CA]"
               >
-                <Upload className="h-4 w-4 mr-2" />
+                <Upload className="mr-2 h-4 w-4" />
                 Upload Template
               </Button>
             </div>
             {selectedFile && (
-              <div className="mt-4 p-3 bg-[#4F46E5]/10 border border-[#4F46E5]/20 rounded-md">
+              <div className="mt-4 rounded-md border border-[#4F46E5]/20 bg-[#4F46E5]/10 p-3">
                 <p className="text-sm text-[#4F46E5]">
                   <strong>Selected file:</strong> {selectedFile.name} (
                   {Math.round(selectedFile.size / 1024)} KB)
@@ -200,15 +201,15 @@ export default function LeaseTemplatesPage() {
                 {templates.map((template) => (
                   <div
                     key={template.id}
-                    className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                    className="flex items-center justify-between rounded-lg border border-slate-200 p-4 transition-colors hover:bg-slate-50"
                   >
                     <div className="flex items-center space-x-4">
-                      <div className="w-3 h-16 bg-[#4F46E5] rounded-sm flex-shrink-0" />
+                      <div className="h-16 w-3 flex-shrink-0 rounded-sm bg-[#4F46E5]" />
                       <div>
-                        <h3 className="font-semibold text-slate-900 text-lg">
+                        <h3 className="text-lg font-semibold text-slate-900">
                           {template.name}
                         </h3>
-                        <p className="text-slate-600 text-sm">
+                        <p className="text-sm text-slate-600">
                           Uploaded {template.uploadedDate} • {template.fileType}{" "}
                           • {template.fileSize}
                         </p>
@@ -221,7 +222,7 @@ export default function LeaseTemplatesPage() {
                         onClick={() => handlePreviewTemplate(template)}
                         className="bg-transparent"
                       >
-                        <Eye className="h-4 w-4 mr-1" />
+                        <Eye className="mr-1 h-4 w-4" />
                         Preview
                       </Button>
                       <Button
@@ -230,16 +231,16 @@ export default function LeaseTemplatesPage() {
                         onClick={() => handleDownloadTemplate(template)}
                         className="bg-transparent"
                       >
-                        <Download className="h-4 w-4 mr-1" />
+                        <Download className="mr-1 h-4 w-4" />
                         Download
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleDeleteTemplate(template.id)}
-                        className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+                        className="border-red-200 text-red-600 hover:border-red-300 hover:bg-red-50"
                       >
-                        <Trash2 className="h-4 w-4 mr-1" />
+                        <Trash2 className="mr-1 h-4 w-4" />
                         Delete
                       </Button>
                     </div>
@@ -247,12 +248,12 @@ export default function LeaseTemplatesPage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <FileText className="mx-auto h-12 w-12 text-slate-400 mb-4" />
-                <h3 className="text-lg font-medium text-slate-900 mb-2">
+              <div className="py-12 text-center">
+                <FileText className="mx-auto mb-4 h-12 w-12 text-slate-400" />
+                <h3 className="mb-2 text-lg font-medium text-slate-900">
                   No templates yet
                 </h3>
-                <p className="text-slate-600 mb-4">
+                <p className="mb-4 text-slate-600">
                   Upload your first lease agreement template to get started.
                 </p>
               </div>
@@ -261,19 +262,19 @@ export default function LeaseTemplatesPage() {
         </Card>
 
         {/* Help Section */}
-        <Card className="mt-6 bg-slate-50 border-slate-200">
+        <Card className="mt-6 border-slate-200 bg-slate-50">
           <CardContent className="p-6">
             <div className="flex items-start space-x-3">
               <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-[#4F46E5]/10 rounded-full flex items-center justify-center">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#4F46E5]/10">
                   <FileText className="h-4 w-4 text-[#4F46E5]" />
                 </div>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-slate-900 mb-1">
+                <h4 className="mb-1 text-sm font-medium text-slate-900">
                   Template Management Tips
                 </h4>
-                <p className="text-sm text-slate-600 mb-3">
+                <p className="mb-3 text-sm text-slate-600">
                   Keep your lease templates organized and up-to-date. You can
                   upload different templates for different property types and
                   lease terms. Templates can be used when generating lease
@@ -281,7 +282,7 @@ export default function LeaseTemplatesPage() {
                 </p>
                 <Button
                   variant="link"
-                  className="px-0 text-[#4F46E5] hover:text-[#4338CA] text-sm"
+                  className="px-0 text-sm text-[#4F46E5] hover:text-[#4338CA]"
                 >
                   Learn more about lease templates →
                 </Button>

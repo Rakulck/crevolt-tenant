@@ -37,7 +37,7 @@ export function GoogleMapsScript({ onLoad }: GoogleMapsScriptProps) {
     return () => {
       // Cleanup if component unmounts
       const existingScript = document.querySelector(
-        'script[src*="maps.googleapis.com"]'
+        'script[src*="maps.googleapis.com"]',
       )
       if (existingScript) {
         existingScript.remove()

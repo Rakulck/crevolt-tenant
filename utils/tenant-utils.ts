@@ -36,7 +36,7 @@ export const getUploadProgress = (tenants: TenantData[]): number => {
 
 export const generateSuccessMessage = (
   tenantName: string,
-  isEditing: boolean
+  isEditing: boolean,
 ): string => {
   const name = tenantName || "Tenant"
   return isEditing

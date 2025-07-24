@@ -1,8 +1,7 @@
 "use client"
 
-import type React from "react"
+import React, { Suspense } from "react"
 
-import { Suspense } from "react"
 import { ErrorBoundary } from "./error-boundary"
 
 interface SuspenseWrapperProps {

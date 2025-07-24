@@ -6,7 +6,7 @@
 -- Risk Severity Levels
 CREATE TYPE public.risk_severity AS ENUM (
   'low',
-  'medium', 
+  'medium',
   'high',
   'critical'
 );
@@ -15,7 +15,7 @@ CREATE TYPE public.risk_severity AS ENUM (
 CREATE TYPE public.payment_pattern AS ENUM (
   'on_time',
   'occasionally_late',
-  'frequently_late', 
+  'frequently_late',
   'consistently_late',
   'in_arrears',
   'no_payment'
@@ -55,6 +55,7 @@ CREATE TYPE public.property_type AS ENUM (
   'duplex',
   'triplex',
   'fourplex',
+  'apartment',
   'apartment_complex',
   'condominium',
   'townhouse',
@@ -155,4 +156,4 @@ COMMENT ON TYPE public.property_type IS 'Types of rental properties';
 COMMENT ON TYPE public.document_type IS 'Types of documents in the system';
 COMMENT ON TYPE public.file_status IS 'File processing and storage status';
 COMMENT ON TYPE public.notification_type IS 'Types of system notifications';
-COMMENT ON TYPE public.tenant_status IS 'Current status of tenant leases'; 
+COMMENT ON TYPE public.tenant_status IS 'Current status of tenant leases';

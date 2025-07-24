@@ -1,7 +1,9 @@
 "use client"
 
 import { useEffect } from "react"
+
 import { AlertTriangle, RefreshCw, Home, Bug } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -44,7 +46,7 @@ Please describe what you were doing when this error occurred:
   return (
     <html>
       <body>
-        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
           <Card className="w-full max-w-2xl">
             <CardHeader className="text-center">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
@@ -61,11 +63,11 @@ Please describe what you were doing when this error occurred:
             <CardContent className="space-y-6">
               {/* Error Details (only in development) */}
               {process.env.NODE_ENV === "development" && (
-                <div className="bg-slate-100 p-4 rounded-lg">
-                  <h4 className="font-medium text-slate-900 mb-2">
+                <div className="rounded-lg bg-slate-100 p-4">
+                  <h4 className="mb-2 font-medium text-slate-900">
                     Error Details (Development Only):
                   </h4>
-                  <div className="text-sm text-slate-700 space-y-1">
+                  <div className="space-y-1 text-sm text-slate-700">
                     <p>
                       <strong>Message:</strong> {error.message}
                     </p>
@@ -79,7 +81,7 @@ Please describe what you were doing when this error occurred:
                         <summary className="cursor-pointer font-medium">
                           Stack Trace
                         </summary>
-                        <pre className="mt-2 text-xs bg-slate-200 p-2 rounded overflow-auto max-h-40">
+                        <pre className="mt-2 max-h-40 overflow-auto rounded bg-slate-200 p-2 text-xs">
                           {error.stack}
                         </pre>
                       </details>
@@ -89,39 +91,39 @@ Please describe what you were doing when this error occurred:
               )}
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <div className="flex flex-col justify-center gap-3 sm:flex-row">
                 <Button
                   onClick={reset}
-                  className="bg-[#4F46E5] hover:bg-[#4338CA] text-white"
+                  className="bg-[#4F46E5] text-white hover:bg-[#4338CA]"
                 >
-                  <RefreshCw className="h-4 w-4 mr-2" />
+                  <RefreshCw className="mr-2 h-4 w-4" />
                   Try Again
                 </Button>
 
                 <Button onClick={handleGoHome} variant="outline">
-                  <Home className="h-4 w-4 mr-2" />
+                  <Home className="mr-2 h-4 w-4" />
                   Go to Dashboard
                 </Button>
 
                 <Button onClick={handleReportBug} variant="outline">
-                  <Bug className="h-4 w-4 mr-2" />
+                  <Bug className="mr-2 h-4 w-4" />
                   Report Bug
                 </Button>
               </div>
 
               {/* Help Information */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
                 <div className="flex items-start space-x-3">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
                       <AlertTriangle className="h-4 w-4 text-blue-600" />
                     </div>
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-blue-900 mb-1">
+                    <h4 className="mb-1 text-sm font-medium text-blue-900">
                       Need Help?
                     </h4>
-                    <p className="text-sm text-blue-700 mb-3">
+                    <p className="mb-3 text-sm text-blue-700">
                       If this error persists, please contact our support team.
                       Include the error details above if possible.
                     </p>
@@ -149,7 +151,7 @@ Please describe what you were doing when this error occurred:
                     href="https://status.tenantpro.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#4F46E5] hover:text-[#4338CA] underline"
+                    className="text-[#4F46E5] underline hover:text-[#4338CA]"
                   >
                     status page
                   </a>{" "}

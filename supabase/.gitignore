@@ -76,3 +76,54 @@ config.override.toml
 
 # Generated TypeScript types (if you regenerate them frequently)
 # types/database.types.ts
+
+# Project specific
+/seed/*.sql
+/functions/node_modules/
+/functions/dist/
+/functions/.env*
+/functions/tmp/
+
+# Database specific
+*.pgdump
+/db/data/
+/db/init/
+/db/scripts/*.sql
+!/db/scripts/schema.sql
+
+# Edge Functions
+/edge-functions/**/node_modules/
+/edge-functions/**/.env
+/edge-functions/**/dist/
+/edge-functions/**/*.log
+
+# Storage
+/storage/public/*
+!/storage/public/.keep
+/storage/private/*
+!/storage/private/.keep
+
+# Auth
+/auth/templates/*
+!/auth/templates/.keep
+
+# Realtime
+/realtime/node_modules/
+/realtime/dist/
+/realtime/.env*
+
+# Local development
+.dev/
+.local/
+*.dev.sql
+*.local.sql
+
+# Backup and restore
+*.dump
+*.restore
+/backups/*.sql
+
+# Generated files
+schema.gen.sql
+types.gen.ts
+supabase.gen.ts

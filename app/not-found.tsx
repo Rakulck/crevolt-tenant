@@ -1,6 +1,8 @@
 "use client"
 
 import { Home, ArrowLeft } from "lucide-react"
+import { useRouter } from "next/navigation"
+
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -9,13 +11,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { useRouter } from "next/navigation"
 
 export default function NotFound() {
   const router = useRouter()
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
       <Card className="w-full max-w-lg text-center">
         <CardHeader>
           <div className="mx-auto mb-4 text-6xl font-bold text-slate-400">
@@ -32,9 +33,9 @@ export default function NotFound() {
           <div className="space-y-3">
             <Button
               onClick={() => router.push("/dashboard")}
-              className="w-full bg-[#4F46E5] hover:bg-[#4338CA] text-white"
+              className="w-full bg-[#4F46E5] text-white hover:bg-[#4338CA]"
             >
-              <Home className="h-4 w-4 mr-2" />
+              <Home className="mr-2 h-4 w-4" />
               Go to Dashboard
             </Button>
             <Button
@@ -42,16 +43,16 @@ export default function NotFound() {
               variant="outline"
               className="w-full"
             >
-              <ArrowLeft className="h-4 w-4 mr-2" />
+              <ArrowLeft className="mr-2 h-4 w-4" />
               Go Back
             </Button>
           </div>
 
-          <div className="bg-slate-100 p-4 rounded-lg">
-            <h4 className="font-medium text-slate-900 mb-2">
+          <div className="rounded-lg bg-slate-100 p-4">
+            <h4 className="mb-2 font-medium text-slate-900">
               Looking for something specific?
             </h4>
-            <ul className="text-sm text-slate-600 space-y-1 text-left">
+            <ul className="space-y-1 text-left text-sm text-slate-600">
               <li>
                 •{" "}
                 <a href="/dashboard" className="text-[#4F46E5] hover:underline">

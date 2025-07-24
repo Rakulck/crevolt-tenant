@@ -1,7 +1,9 @@
 "use client"
 
 import { useState } from "react"
+
 import { Palette, Check } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -28,7 +30,7 @@ export function ThemeCustomizer() {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
-          <Palette className="h-4 w-4 mr-2" />
+          <Palette className="mr-2 h-4 w-4" />
           Customize
         </Button>
       </DialogTrigger>
@@ -55,7 +57,7 @@ export function ThemeCustomizer() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <div
-                        className="w-6 h-6 rounded-full"
+                        className="h-6 w-6 rounded-full"
                         style={{ backgroundColor: theme.primary }}
                       />
                       <span className="font-medium">{theme.name}</span>
@@ -68,7 +70,7 @@ export function ThemeCustomizer() {
               </Card>
             ))}
           </div>
-          <div className="pt-4 border-t">
+          <div className="border-t pt-4">
             <p className="text-sm text-muted-foreground">
               Your theme preference will be saved automatically.
             </p>

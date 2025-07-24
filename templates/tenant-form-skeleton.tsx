@@ -7,8 +7,8 @@ export function TenantFormSkeleton() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header Skeleton */}
-      <header className="bg-white border-b border-slate-200 px-6 py-4">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
+      <header className="border-b border-slate-200 bg-white px-6 py-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between">
           <div className="flex items-center space-x-4">
             <Skeleton className="h-8 w-32" />
             <div className="h-6 w-px bg-slate-300" />
@@ -21,7 +21,7 @@ export function TenantFormSkeleton() {
       </header>
 
       {/* Main Content Skeleton */}
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      <main className="mx-auto max-w-7xl px-6 py-8">
         {/* Stepper Skeleton */}
         <Card className="mb-8">
           <CardContent className="p-6">
@@ -30,9 +30,9 @@ export function TenantFormSkeleton() {
                 <div key={step} className="flex items-center">
                   <div className="flex flex-col items-center">
                     <Skeleton className="h-10 w-10 rounded-full" />
-                    <Skeleton className="h-4 w-24 mt-2" />
+                    <Skeleton className="mt-2 h-4 w-24" />
                   </div>
-                  {step < 3 && <Skeleton className="h-0.5 w-16 mx-4" />}
+                  {step < 3 && <Skeleton className="mx-4 h-0.5 w-16" />}
                 </div>
               ))}
             </div>
@@ -43,12 +43,12 @@ export function TenantFormSkeleton() {
         <Card className="shadow-lg">
           <CardHeader>
             <Skeleton className="h-8 w-64" />
-            <Skeleton className="h-4 w-96 mt-2" />
+            <Skeleton className="mt-2 h-4 w-96" />
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
               {/* Form Fields Skeleton */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 {Array.from({ length: 8 }).map((_, index) => (
                   <div key={index} className="space-y-2">
                     <Skeleton className="h-4 w-24" />
@@ -58,7 +58,7 @@ export function TenantFormSkeleton() {
               </div>
 
               {/* Action Buttons Skeleton */}
-              <div className="flex items-center justify-between pt-8 border-t border-slate-200">
+              <div className="flex items-center justify-between border-t border-slate-200 pt-8">
                 <Skeleton className="h-10 w-20" />
                 <div className="flex space-x-2">
                   <Skeleton className="h-10 w-24" />

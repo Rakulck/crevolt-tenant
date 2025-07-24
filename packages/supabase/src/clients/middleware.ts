@@ -1,18 +1,18 @@
-import { createServerClient } from "@supabase/ssr"
-import type { CookieOptions } from "@supabase/ssr"
-import { type NextRequest, NextResponse } from "next/server"
+import { createServerClient, type CookieOptions } from "@supabase/ssr"
+import { NextResponse, type NextRequest } from "next/server"
+
 import type { Database } from "../types"
 
 export const updateSession = async (
   request: NextRequest,
-  initialResponse: NextResponse
+  initialResponse: NextResponse,
 ) => {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!supabaseUrl || !supabaseKey) {
     throw new Error(
-      "Supabase configuration missing. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables."
+      "Supabase configuration missing. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.",
     )
   }
 
@@ -60,13 +60,18 @@ export const updateSession = async (
     },
   })
 
-  // Get session data
+  // Get user data (more secure than getSession for server-side)
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+    error,
+  } = await supabase.auth.getUser()
+
+  if (error) {
+    console.warn("Auth validation error in middleware:", error.message)
+  }
 
   return {
     response,
-    user: session?.user ?? null,
+    user: user ?? null,
   }
 }

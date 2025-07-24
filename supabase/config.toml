@@ -4,7 +4,6 @@
 # working directory name when running `supabase init`.
 project_id = "CREvolt-Tenant"
 
-
 [api]
 enabled = true
 port = 54321

@@ -15,7 +15,7 @@ export function TenantFormStepper({ currentStep, steps }: StepperProps) {
           const stepNumber = index + 1
           const isCompleted = stepNumber < currentStep
           const isCurrent = stepNumber === currentStep
-          const isUpcoming = stepNumber > currentStep
+          const _isUpcoming = stepNumber > currentStep
 
           return (
             <div key={index} className="flex items-center">
@@ -23,10 +23,10 @@ export function TenantFormStepper({ currentStep, steps }: StepperProps) {
                 <div
                   className={`flex h-10 w-10 items-center justify-center rounded-full border-2 ${
                     isCompleted
-                      ? "bg-[#4F46E5] border-[#4F46E5] text-white"
+                      ? "border-[#4F46E5] bg-[#4F46E5] text-white"
                       : isCurrent
-                        ? "border-[#4F46E5] text-[#4F46E5] bg-white"
-                        : "border-slate-300 text-slate-400 bg-white"
+                        ? "border-[#4F46E5] bg-white text-[#4F46E5]"
+                        : "border-slate-300 bg-white text-slate-400"
                   }`}
                 >
                   {isCompleted ? (
@@ -49,7 +49,7 @@ export function TenantFormStepper({ currentStep, steps }: StepperProps) {
               </div>
               {index < steps.length - 1 && (
                 <div
-                  className={`h-0.5 w-16 mx-4 ${isCompleted ? "bg-[#4F46E5]" : "bg-slate-300"}`}
+                  className={`mx-4 h-0.5 w-16 ${isCompleted ? "bg-[#4F46E5]" : "bg-slate-300"}`}
                 />
               )}
             </div>

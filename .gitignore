@@ -138,3 +138,51 @@ temp/
 
 # Local development files
 .local
+
+# Supabase
+/supabase/.temp/
+/supabase/seed.sql
+/supabase/config.toml
+
+# Project specific
+/public/uploads/
+/public/temp/
+*.local.ts
+*.local.tsx
+.env*.local
+
+# Generated files
+/types/supabase.ts
+/types/database.types.ts
+
+# Development certificates
+*.crt
+*.key
+*.pem
+
+# Local database files
+*.sqlite
+*.sqlite3
+*.db
+
+# Backup files
+*.bak
+*.backup
+*.swp
+*~
+
+# Local configuration overrides
+*.override.ts
+*.override.tsx
+config.override.json
+
+# Test files
+*.test.ts.snap
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
+# Build artifacts
+.next-boost
+.swc/
+tsconfig.tsbuildinfo

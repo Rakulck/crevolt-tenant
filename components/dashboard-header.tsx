@@ -1,6 +1,8 @@
 "use client"
 
-import { Building2, User, FileText, LogOut } from "lucide-react"
+import { Building2, FileText, LogOut, User } from "lucide-react"
+import { useRouter } from "next/navigation"
+
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -9,13 +11,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useRouter } from "next/navigation"
+
+import { useAuth } from "../hooks/use-auth"
 
 export function DashboardHeader() {
   const router = useRouter()
+  const { user: _user, signOut } = useAuth()
+
+  const handleSignOut = async () => {
+    await signOut()
+  }
 
   return (
-    <header className="bg-white border-b border-slate-200 px-6 py-4">
+    <header className="border-b border-slate-200 bg-white px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
@@ -28,10 +36,10 @@ export function DashboardHeader() {
 
         <div className="flex items-center space-x-3">
           <Button
-            className="bg-[#4F46E5] hover:bg-[#4338CA] text-white"
+            className="bg-[#4F46E5] text-white hover:bg-[#4338CA]"
             onClick={() => router.push("/dashboard/lease-templates")}
           >
-            <FileText className="h-4 w-4 mr-2" />
+            <FileText className="mr-2 h-4 w-4" />
             Lease Agreement
           </Button>
 
@@ -39,9 +47,9 @@ export function DashboardHeader() {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="bg-slate-500 hover:bg-slate-600 text-white border-slate-500"
+                className="border-slate-500 bg-slate-500 text-white hover:bg-slate-600"
               >
-                <User className="h-4 w-4 mr-2" />
+                <User className="mr-2 h-4 w-4" />
                 Profile
               </Button>
             </DropdownMenuTrigger>
@@ -49,16 +57,19 @@ export function DashboardHeader() {
               <DropdownMenuItem
                 onClick={() => router.push("/dashboard/profile")}
               >
-                <User className="h-4 w-4 mr-2" />
+                <User className="mr-2 h-4 w-4" />
                 Account Settings
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <FileText className="h-4 w-4 mr-2" />
+                <FileText className="mr-2 h-4 w-4" />
                 Billing
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-red-600">
-                <LogOut className="h-4 w-4 mr-2" />
+              <DropdownMenuItem
+                className="text-red-600"
+                onClick={handleSignOut}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
                 Sign Out
               </DropdownMenuItem>
             </DropdownMenuContent>
