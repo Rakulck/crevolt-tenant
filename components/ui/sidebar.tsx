@@ -1,3 +1,4 @@
+/* eslint-disable func-call-spacing */
 "use client"
 
 import * as React from "react"
@@ -48,7 +49,6 @@ function useSidebar() {
   return context
 }
 
-// eslint-disable-next-line func-call-spacing
 const SidebarProvider = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {

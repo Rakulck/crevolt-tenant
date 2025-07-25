@@ -22,6 +22,13 @@ interface TenantDataEntryProps {
   uploadedFile: File | null
   showSuccessMessage: boolean
   successMessage: string
+  processingRentRoll?: boolean
+  rentRollErrors?: string[]
+  uploadProgress?: {
+    stage: "processing" | "uploading" | "complete"
+    percent: number
+    message: string
+  }
   onDataEntryMethodChange: (method: "upload" | "manual") => void
   onTenantChange: (field: string, value: string) => void
   onSaveTenant: () => void
@@ -38,6 +45,9 @@ export function TenantDataEntry({
   uploadedFile,
   showSuccessMessage,
   successMessage,
+  processingRentRoll = false,
+  rentRollErrors = [],
+  uploadProgress,
   onDataEntryMethodChange,
   onTenantChange,
   onSaveTenant,
@@ -99,6 +109,9 @@ export function TenantDataEntry({
           <RentRollUpload
             uploadedFile={uploadedFile}
             onFileUpload={onFileUpload}
+            isProcessing={processingRentRoll}
+            errors={rentRollErrors}
+            progress={uploadProgress}
           />
         </TabsContent>
 

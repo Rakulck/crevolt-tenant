@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { ArrowLeft, Building2, Loader2 } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 
+// eslint-disable-next-line import/order
 import { TenantFormStepper } from "@/components/tenant-form-stepper"
 import { LeaseDocumentsStep } from "@/components/tenant/lease-documents-step"
 import { TenantDataEntry } from "@/components/tenant/tenant-data-entry"
@@ -64,6 +65,7 @@ export default function AddTenantPage() {
   const [properties, setProperties] = useState<Property[]>([])
   const [loadingProperties, setLoadingProperties] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [currentUser, setCurrentUser] = useState<any>(null)
 
@@ -76,12 +78,16 @@ export default function AddTenantPage() {
     uploadingLeases,
     uploadErrors,
     pendingLeaseDocuments,
+    processingRentRoll,
+    rentRollErrors,
+    uploadProgress,
     handleTenantChange,
     handleSavedTenantChange,
     saveTenant,
     editTenant,
     removeTenant,
     handleLeaseAgreementUpload,
+    handleRentRollUpload,
   } = useTenantForm()
 
   // Load user properties and get current user on component mount
@@ -104,7 +110,43 @@ export default function AddTenantPage() {
 
         // Load properties
         const userProperties = await getUserProperties()
+        console.log("🏠 [AddTenant] Loaded properties:", userProperties)
+        console.log("🔗 [AddTenant] Property ID from URL:", propertyIdFromUrl)
+
         setProperties(userProperties)
+
+        // Validate property ID from URL
+        if (propertyIdFromUrl && userProperties.length > 0) {
+          const propertyExists = userProperties.some(
+            (p) => p.id === propertyIdFromUrl,
+          )
+          console.log(
+            "✅ [AddTenant] Property ID exists in loaded properties:",
+            propertyExists,
+          )
+
+          if (!propertyExists) {
+            console.warn(
+              "⚠️ [AddTenant] Property ID from URL not found in user properties!",
+            )
+            console.log(
+              "Available property IDs:",
+              userProperties.map((p) => ({ id: p.id, name: p.name })),
+            )
+            setError(
+              `Property not found or you don't have access to it. Please select a different property.`,
+            )
+            setSelectedPropertyId("") // Clear invalid property ID
+          } else {
+            const selectedProperty = userProperties.find(
+              (p) => p.id === propertyIdFromUrl,
+            )
+            console.log(
+              "🎯 [AddTenant] Selected property:",
+              selectedProperty?.name,
+            )
+          }
+        }
       } catch (error) {
         console.error("Failed to load data:", error)
         setError("Failed to load properties. Please refresh the page.")
@@ -116,12 +158,25 @@ export default function AddTenantPage() {
     loadDataAndUser()
   }, [])
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0]
     if (file) {
       setUploadedFile(file)
-      // TODO: Implement rent roll parsing
       console.log("File uploaded:", file.name)
+
+      // Process the rent roll file with storage integration
+      const success = await handleRentRollUpload(
+        file,
+        selectedPropertyId || undefined,
+        undefined, // User ID will be fetched inside the function
+      )
+      if (success) {
+        console.log("Rent roll processed and stored successfully")
+      } else {
+        console.error("Failed to process rent roll")
+      }
     }
   }
 
@@ -231,7 +286,10 @@ export default function AddTenantPage() {
 
       console.log("Submitting tenants:", tenantsToCreate)
 
-      // Create tenants in database
+      // Update state to show analyzing phase
+      setIsAnalyzing(true)
+
+      // Create tenants in database (this triggers AI analysis automatically)
       const result = await createTenantsBulk(tenantsToCreate)
 
       if (!result.success) {
@@ -289,6 +347,7 @@ export default function AddTenantPage() {
       )
     } finally {
       setIsSubmitting(false)
+      setIsAnalyzing(false)
     }
   }
 
@@ -379,6 +438,9 @@ export default function AddTenantPage() {
                 uploadedFile={uploadedFile}
                 showSuccessMessage={showSuccessMessage}
                 successMessage={successMessage}
+                processingRentRoll={processingRentRoll}
+                rentRollErrors={rentRollErrors}
+                uploadProgress={uploadProgress}
                 onDataEntryMethodChange={setDataEntryMethod}
                 onTenantChange={handleTenantChange}
                 onSaveTenant={saveTenant}
@@ -505,9 +567,12 @@ export default function AddTenantPage() {
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        {isAnalyzing ? "Analyzing..." : "Saving..."}
+                      </>
                     ) : (
-                      "Submit"
+                      "Analyze & Submit"
                     )}
                   </Button>
                 )}
