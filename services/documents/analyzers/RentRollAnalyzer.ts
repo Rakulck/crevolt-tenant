@@ -1,42 +1,45 @@
-import type { DocumentAnalysisResult, DocumentFile } from "@/lib/types/documents";
-import { BaseDocumentAnalyzer } from "@/lib/types/documents/analyzers/base";
-import { FileProcessorService } from "@/services/documents/file-processor.service";
-import { Effect } from "effect";
-import OpenAI from "openai";
+import { Effect } from "effect"
+import OpenAI from "openai"
+
+import { FileProcessorService } from "@/services/documents/file-processor.service"
+import type { DocumentAnalysisResult, DocumentFile } from "@/types/documents"
+import { BaseDocumentAnalyzer } from "@/types/documents/analyzers/base"
 
 export class RentRollAnalyzer extends BaseDocumentAnalyzer {
   private static openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
-  });
+  })
 
   getSupportedDocumentType(): string {
-    return "rent_roll";
+    return "rent_roll"
   }
 
-  analyzeDocument(document: DocumentFile): Effect.Effect<DocumentAnalysisResult, Error> {
-    const startTime = Date.now();
-    const self = this;
+  analyzeDocument(
+    document: DocumentFile,
+  ): Effect.Effect<DocumentAnalysisResult, Error> {
+    const startTime = Date.now()
+    const self = this
     return Effect.gen(function* (_) {
       yield* _(
         Effect.sync(() => {
-          self.validateFile(document.file);
+          self.validateFile(document.file)
         }),
-      );
+      )
       const analysisResult: {
-        summary: string;
-        extractedData: Record<string, unknown>;
+        summary: string
+        extractedData: Record<string, unknown>
       } = yield* _(
         Effect.tryPromise({
           try: async () => {
             if (self.isSpreadsheetFile(document.file)) {
-              return self.analyzeSpreadsheetRentRoll(document);
+              return self.analyzeSpreadsheetRentRoll(document)
             }
-            return self.analyzeVisualRentRoll(document);
+            return self.analyzeVisualRentRoll(document)
           },
           catch: (e: unknown) => e as Error,
         }),
-      );
-      const processingTime = Date.now() - startTime;
+      )
+      const processingTime = Date.now() - startTime
 
       return self.createAnalysisResult(
         document,
@@ -45,10 +48,10 @@ export class RentRollAnalyzer extends BaseDocumentAnalyzer {
         analysisResult.extractedData,
         undefined,
         processingTime,
-      );
+      )
     }).pipe(
       Effect.catchAll((error: unknown) => {
-        const processingTime = Date.now() - startTime;
+        const processingTime = Date.now() - startTime
         return Effect.succeed(
           self.createAnalysisResult(
             document,
@@ -58,9 +61,9 @@ export class RentRollAnalyzer extends BaseDocumentAnalyzer {
             error instanceof Error ? error.message : "Unknown error",
             processingTime,
           ),
-        );
+        )
       }),
-    );
+    )
   }
 
   private isSpreadsheetFile(file: File): boolean {
@@ -71,16 +74,16 @@ export class RentRollAnalyzer extends BaseDocumentAnalyzer {
       file.name.toLowerCase().endsWith(".xlsx") ||
       file.name.toLowerCase().endsWith(".xls") ||
       file.name.toLowerCase().endsWith(".csv")
-    );
+    )
   }
 
   private async analyzeSpreadsheetRentRoll(document: DocumentFile): Promise<{
-    summary: string;
-    extractedData: Record<string, unknown>;
+    summary: string
+    extractedData: Record<string, unknown>
   }> {
     try {
       // Use existing file processor to extract data
-      const fileResult = await FileProcessorService.processFile(document.file);
+      const fileResult = await FileProcessorService.processFile(document.file)
 
       // Find the most relevant sheet (largest one or one with "rent" in name)
       const relevantSheet = fileResult.sheets.reduce((best, current) => {
@@ -88,19 +91,19 @@ export class RentRollAnalyzer extends BaseDocumentAnalyzer {
           current.name.toLowerCase().includes("rent") ||
           current.name.toLowerCase().includes("roll")
         ) {
-          return current;
+          return current
         }
-        return current.data.length > best.data.length ? current : best;
-      });
+        return current.data.length > best.data.length ? current : best
+      })
 
       // Extract numerical insights
-      const extractedData = this.extractRentRollMetrics(relevantSheet.data);
+      const extractedData = this.extractRentRollMetrics(relevantSheet.data)
 
       // Use AI to create summary
       const dataPreview = relevantSheet.data
         .slice(0, 20)
         .map((row) => row.slice(0, 10).join("\t"))
-        .join("\n");
+        .join("\n")
 
       const completion = await RentRollAnalyzer.openai.chat.completions.create({
         model: "gpt-4o-mini",
@@ -117,26 +120,26 @@ export class RentRollAnalyzer extends BaseDocumentAnalyzer {
         ],
         max_tokens: 200,
         temperature: 0.3,
-      });
+      })
 
       const summary =
         completion.choices[0]?.message?.content ||
-        `Rent roll contains ${relevantSheet.data.length} rows of data with ${extractedData.totalUnits || "unknown"} units.`;
+        `Rent roll contains ${relevantSheet.data.length} rows of data with ${extractedData.totalUnits || "unknown"} units.`
 
-      return { summary, extractedData };
+      return { summary, extractedData }
     } catch (error) {
       throw new Error(
         `Failed to analyze spreadsheet rent roll: ${error instanceof Error ? error.message : "Unknown error"}`,
-      );
+      )
     }
   }
 
   private async analyzeVisualRentRoll(document: DocumentFile): Promise<{
-    summary: string;
-    extractedData: Record<string, unknown>;
+    summary: string
+    extractedData: Record<string, unknown>
   }> {
     try {
-      const base64File = await this.convertFileToBase64(document.file);
+      const base64File = await this.convertFileToBase64(document.file)
 
       const completion = await RentRollAnalyzer.openai.chat.completions.create({
         model: "gpt-4o",
@@ -164,51 +167,52 @@ export class RentRollAnalyzer extends BaseDocumentAnalyzer {
         ],
         max_tokens: 500,
         temperature: 0.3,
-      });
+      })
 
-      const response = completion.choices[0]?.message?.content || "";
+      const response = completion.choices[0]?.message?.content || ""
 
       // Try to extract JSON from response
-      let extractedData: Record<string, unknown> = {};
+      let extractedData: Record<string, unknown> = {}
       try {
-        const jsonMatch = response.match(/\{[\s\S]*\}/);
+        const jsonMatch = response.match(/\{[\s\S]*\}/)
         if (jsonMatch) {
-          extractedData = JSON.parse(jsonMatch[0]);
+          extractedData = JSON.parse(jsonMatch[0])
         }
       } catch {
         // If JSON parsing fails, create basic structure
         extractedData = {
           analysisNotes: response,
           extractionMethod: "visual_analysis",
-        };
+        }
       }
 
-      const summary = response.split("\n")[0] || "Rent roll document analyzed via AI vision.";
+      const summary =
+        response.split("\n")[0] || "Rent roll document analyzed via AI vision."
 
-      return { summary, extractedData };
+      return { summary, extractedData }
     } catch (error) {
       throw new Error(
         `Failed to analyze visual rent roll: ${error instanceof Error ? error.message : "Unknown error"}`,
-      );
+      )
     }
   }
 
   private extractRentRollMetrics(data: unknown[][]): Record<string, unknown> {
-    const metrics: Record<string, unknown> = {};
+    const metrics: Record<string, unknown> = {}
 
     try {
       // Basic analysis of spreadsheet data
-      metrics.totalRows = data.length;
-      metrics.totalColumns = data[0]?.length || 0;
+      metrics.totalRows = data.length
+      metrics.totalColumns = data[0]?.length || 0
 
       // Look for numeric columns that might represent rent
-      const numericColumns = this.findNumericColumns(data);
+      const numericColumns = this.findNumericColumns(data)
       if (numericColumns.length > 0) {
-        const rentColumn = numericColumns.find((col) => col.sum > 1000); // Likely rent column
+        const rentColumn = numericColumns.find((col) => col.sum > 1000) // Likely rent column
         if (rentColumn) {
-          metrics.totalRent = rentColumn.sum;
-          metrics.averageRent = rentColumn.average;
-          metrics.totalUnits = rentColumn.count;
+          metrics.totalRent = rentColumn.sum
+          metrics.averageRent = rentColumn.average
+          metrics.totalUnits = rentColumn.count
         }
       }
 
@@ -222,57 +226,59 @@ export class RentRollAnalyzer extends BaseDocumentAnalyzer {
             typeof cell === "number" &&
             cell > 0,
         ),
-      ).length;
+      ).length
 
       if (occupiedUnits > 0 && data.length > 1) {
-        metrics.occupancyRate = Math.round((occupiedUnits / (data.length - 1)) * 100); // -1 for header
+        metrics.occupancyRate = Math.round(
+          (occupiedUnits / (data.length - 1)) * 100,
+        ) // -1 for header
       }
     } catch (error) {
-      metrics.error = `Metrics extraction failed: ${error instanceof Error ? error.message : "Unknown error"}`;
+      metrics.error = `Metrics extraction failed: ${error instanceof Error ? error.message : "Unknown error"}`
     }
 
-    return metrics;
+    return metrics
   }
 
   private findNumericColumns(data: unknown[][]): Array<{
-    columnIndex: number;
-    sum: number;
-    average: number;
-    count: number;
+    columnIndex: number
+    sum: number
+    average: number
+    count: number
   }> {
-    if (data.length < 2) return [];
+    if (data.length < 2) return []
 
     const columns: Array<{
-      columnIndex: number;
-      sum: number;
-      average: number;
-      count: number;
-    }> = [];
+      columnIndex: number
+      sum: number
+      average: number
+      count: number
+    }> = []
 
-    const maxColumns = Math.max(...data.map((row) => row.length));
+    const maxColumns = Math.max(...data.map((row) => row.length))
 
     for (let colIndex = 0; colIndex < maxColumns; colIndex++) {
-      const numbers: number[] = [];
+      const numbers: number[] = []
 
       for (let rowIndex = 1; rowIndex < data.length; rowIndex++) {
         // Skip header
-        const cell = data[rowIndex]?.[colIndex];
+        const cell = data[rowIndex]?.[colIndex]
         if (typeof cell === "number" && !Number.isNaN(cell) && cell > 0) {
-          numbers.push(cell);
+          numbers.push(cell)
         }
       }
 
       if (numbers.length > 0) {
-        const sum = numbers.reduce((a, b) => a + b, 0);
+        const sum = numbers.reduce((a, b) => a + b, 0)
         columns.push({
           columnIndex: colIndex,
           sum,
           average: sum / numbers.length,
           count: numbers.length,
-        });
+        })
       }
     }
 
-    return columns.sort((a, b) => b.sum - a.sum); // Sort by sum descending
+    return columns.sort((a, b) => b.sum - a.sum) // Sort by sum descending
   }
 }
