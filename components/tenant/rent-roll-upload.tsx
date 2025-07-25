@@ -12,11 +12,21 @@ import { SUPPORTED_FILE_FORMATS } from "../../constants/tenant-constants"
 interface RentRollUploadProps {
   uploadedFile: File | null
   onFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void
+  isProcessing?: boolean
+  errors?: string[]
+  progress?: {
+    stage: "processing" | "uploading" | "complete"
+    percent: number
+    message: string
+  }
 }
 
 export function RentRollUpload({
   uploadedFile,
   onFileUpload,
+  isProcessing = false,
+  errors = [],
+  progress,
 }: RentRollUploadProps) {
   return (
     <div className="space-y-6">
@@ -75,9 +85,57 @@ export function RentRollUpload({
             <p className="text-sm text-green-800">
               <strong>File uploaded:</strong> {uploadedFile.name}
             </p>
-            <p className="mt-1 text-xs text-green-600">
-              Processing file... This may take a few moments.
-            </p>
+
+            {progress ? (
+              <div className="mt-2">
+                {/* Progress Bar */}
+                <div className="h-2 w-full rounded-full bg-green-100">
+                  <div
+                    className="h-2 rounded-full bg-green-500 transition-all duration-300 ease-in-out"
+                    style={{ width: `${progress.percent}%` }}
+                  />
+                </div>
+
+                {/* Progress Message */}
+                <div className="mt-2 flex items-center justify-between text-xs">
+                  <span className="text-green-700">
+                    {progress.stage === "processing" &&
+                      "Processing rent roll..."}
+                    {progress.stage === "uploading" && "Finalizing..."}
+                    {progress.stage === "complete" && "Complete!"}
+                  </span>
+                  <span className="font-medium text-green-700">
+                    {progress.percent}%
+                  </span>
+                </div>
+
+                {/* Detailed Status */}
+                <p className="mt-1 text-xs text-green-600">
+                  {progress.message}
+                </p>
+              </div>
+            ) : isProcessing ? (
+              <p className="mt-1 text-xs text-green-600">
+                Preparing to process file...
+              </p>
+            ) : (
+              <p className="mt-1 text-xs text-green-600">
+                File processed successfully!
+              </p>
+            )}
+          </div>
+        )}
+
+        {errors.length > 0 && (
+          <div className="mt-4 rounded-md border border-red-200 bg-red-50 p-3">
+            <h5 className="text-sm font-medium text-red-800">
+              Processing Errors:
+            </h5>
+            <ul className="mt-1 text-xs text-red-600">
+              {errors.map((error, index) => (
+                <li key={index}>• {error}</li>
+              ))}
+            </ul>
           </div>
         )}
       </div>
