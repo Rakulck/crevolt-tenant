@@ -3,7 +3,15 @@
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 
+import { TenantDefaultAnalyzer } from "@/services/documents/analyzers/TenantDefaultAnalyzer"
+
 import { createServerClientFromEnv } from "../../clients/server"
+import {
+  createAnalysisRequest,
+  saveRecommendedActions,
+  saveRiskAssessments,
+  updateAnalysisStatus,
+} from "../analysis"
 
 import type { Tables } from "../../types/db"
 
@@ -317,6 +325,225 @@ export async function deleteTenant(
 }
 
 // Server action to create multiple tenants (bulk create)
+// Helper function to trigger tenant analysis after bulk tenant creation
+async function triggerTenantAnalysis(propertyId: string, tenants: Tenant[]) {
+  try {
+    console.log(
+      "🔄 [TenantServer] Triggering auto-analysis for",
+      tenants.length,
+      "tenants",
+    )
+
+    // Get property details for analysis
+    const supabase = await createServerClientFromEnv()
+    const { data: property } = await supabase
+      .from("properties")
+      .select("name, address")
+      .eq("id", propertyId)
+      .single()
+
+    if (!property) {
+      throw new Error("Property not found for analysis")
+    }
+
+    const propertyAddress = property.address
+      ? `${property.address.street_address}, ${property.address.city}, ${property.address.state} ${property.address.zip_code}`
+      : null
+
+    console.log("📝 [TenantServer] Creating analysis request...")
+
+    // Step 1: Create analysis request record
+    const analysisRequestResult = await createAnalysisRequest({
+      property_id: propertyId,
+      property_name: property.name || undefined,
+      property_address: propertyAddress || undefined,
+      include_web_search: true,
+      search_location: undefined,
+    })
+
+    if (!analysisRequestResult.success) {
+      throw new Error(
+        `Failed to create analysis request: ${analysisRequestResult.error}`,
+      )
+    }
+
+    const analysisRequest = analysisRequestResult.data!
+    console.log(
+      "✅ [TenantServer] Analysis request created:",
+      analysisRequest.id,
+    )
+
+    // Step 2: Update analysis request status to processing
+    await updateAnalysisStatus(analysisRequest.id, "processing")
+
+    // Step 3: Perform REAL AI analysis using TenantDefaultAnalyzer
+    console.log("🧠 [TenantServer] Creating TenantDefaultAnalyzer...")
+    const analyzer = new TenantDefaultAnalyzer()
+
+    // Create a rent roll CSV from tenant data for analysis
+    const csvContent = createMockRentRollCSV(tenants)
+    const csvBlob = new Blob([csvContent], { type: "text/csv" })
+    const mockFile = new File(
+      [csvBlob],
+      `auto-generated-rent-roll-${propertyId}.csv`,
+      { type: "text/csv" },
+    )
+
+    // Create DocumentFile wrapper (following API pattern)
+    const documentFile = {
+      file: mockFile,
+      type: "rent_roll" as const,
+      metadata: {
+        propertyId,
+        propertyName: property.name,
+        propertyAddress,
+      },
+    }
+
+    // Create analysis request (following API pattern)
+    const tenantAnalysisRequest = {
+      propertyName: property.name || null,
+      propertyAddress: propertyAddress || null,
+      analysisDate: new Date().toISOString(),
+      includeWebSearch: true,
+      searchLocation: null,
+    }
+
+    console.log("🎯 [TenantServer] Running REAL AI tenant analysis...")
+    const analysisResult = await analyzer.analyzeRentRollForDefaults(
+      documentFile,
+      tenantAnalysisRequest,
+    )
+
+    console.log("✅ [TenantServer] AI Analysis completed successfully:", {
+      tenantCount: analysisResult.tenantAssessments.length,
+      processingTimeMs: analysisResult.processingTimeMs,
+    })
+
+    // DEBUGGING: Log the complete analysis result structure
+    console.log("🔍 [TenantServer] FULL AI ANALYSIS RESULT:")
+    console.log(
+      "📊 tenantAssessments:",
+      JSON.stringify(analysisResult.tenantAssessments, null, 2),
+    )
+
+    // Step 4: Save REAL risk assessments to database
+    console.log("💾 [TenantServer] Saving AI risk assessments...")
+    const riskAssessments = analysisResult.tenantAssessments.map(
+      (assessment: any) => ({
+        analysis_request_id: analysisRequest.id,
+        tenant_id:
+          tenants.find(
+            (t) =>
+              t.tenant_name === assessment.tenantName &&
+              t.unit_number === assessment.unitNumber,
+          )?.id || null,
+        property_id: propertyId,
+        tenant_name: assessment.tenantName,
+        unit_number: assessment.unitNumber,
+        risk_severity: assessment.riskSeverity,
+        default_probability: assessment.defaultProbability,
+        confidence_level: assessment.confidence,
+        risk_factors: assessment.riskFactors || [],
+        protective_factors: assessment.protectiveFactors || [],
+        comments: assessment.comments || "No comments available",
+        analysis_reasoning: assessment.reasoning,
+        data_quality_score: assessment.dataQuality,
+        monthly_rent: assessment.monthlyRent,
+        lease_start_date: assessment.leaseStartDate || undefined,
+        lease_end_date: assessment.leaseEndDate || undefined,
+      }),
+    )
+
+    const saveAssessmentsResult = await saveRiskAssessments(riskAssessments)
+    if (!saveAssessmentsResult.success) {
+      throw new Error(
+        `Failed to save risk assessments: ${saveAssessmentsResult.error}`,
+      )
+    }
+
+    // Step 5: Save REAL recommended actions
+    console.log("🎯 [TenantServer] Saving AI recommended actions...")
+    const recommendedActions =
+      analysisResult.recommendedActions
+        ?.map((action: any) => ({
+          risk_assessment_id:
+            saveAssessmentsResult.data?.find(
+              (ra) =>
+                ra.tenant_name === action.tenantName &&
+                ra.unit_number === action.unitNumber,
+            )?.id || "",
+          analysis_request_id: analysisRequest.id,
+          action_type: action.actionType,
+          priority: action.priority,
+          timeline: action.timeline,
+          description: action.description,
+          estimated_cost: action.estimatedCost || undefined,
+          affected_tenants: [action.tenantName],
+          legal_requirements: action.legalRequirements || [],
+          tags: action.tags || [],
+        }))
+        .filter((action: any) => action.risk_assessment_id) || []
+
+    if (recommendedActions.length > 0) {
+      const saveActionsResult = await saveRecommendedActions(recommendedActions)
+      if (!saveActionsResult.success) {
+        console.warn(
+          "⚠️ [TenantServer] Failed to save recommended actions:",
+          saveActionsResult.error,
+        )
+      }
+    }
+
+    // Step 6: Update analysis request status to completed
+    await updateAnalysisStatus(analysisRequest.id, "completed", {
+      processing_time_ms: analysisResult.processingTimeMs,
+      total_tenants_analyzed: analysisResult.tenantAssessments.length,
+      tenants_at_risk: analysisResult.tenantAssessments.filter(
+        (t: any) => t.defaultProbability > 30,
+      ).length,
+      average_risk_probability:
+        analysisResult.tenantAssessments.reduce(
+          (sum: number, t: any) => sum + t.defaultProbability,
+          0,
+        ) / analysisResult.tenantAssessments.length,
+    })
+
+    console.log(
+      "✅ [TenantServer] REAL AI Auto-analysis completed successfully:",
+      analysisRequest.id,
+    )
+  } catch (error) {
+    console.error("❌ [TenantServer] Auto-analysis trigger failed:", error)
+    throw error
+  }
+}
+
+// Helper to create mock CSV content from tenant data
+function createMockRentRollCSV(tenants: Tenant[]): string {
+  const headers = [
+    "Unit Number",
+    "Tenant Name",
+    "Monthly Rent",
+    "Lease Start",
+    "Lease End",
+  ]
+  const csvRows = [headers.join(",")]
+
+  tenants.forEach((tenant) => {
+    const row = [
+      tenant.unit_number || "",
+      tenant.tenant_name || "",
+      tenant.monthly_rent?.toString() || "",
+      tenant.lease_start_date || "",
+      tenant.lease_end_date || "",
+    ]
+    csvRows.push(row.join(","))
+  })
+
+  return csvRows.join("\n")
+}
+
 export async function createTenantsBulk(
   tenantsData: CreateTenantData[],
 ): Promise<{ success: boolean; data?: Tenant[]; error?: string }> {
@@ -381,6 +608,32 @@ export async function createTenantsBulk(
     }
 
     console.log("Tenants created successfully:", data.length)
+
+    // Auto-trigger tenant analysis if tenants were created from rent roll extraction
+    if (data.length > 0) {
+      const propertyId = data[0].property_id
+      console.log(
+        "🎯 [TenantServer] Auto-triggering tenant analysis for property:",
+        propertyId,
+      )
+
+      try {
+        // Trigger tenant analysis in the background (don't wait for completion)
+        triggerTenantAnalysis(propertyId, data).catch((error: any) => {
+          console.error(
+            "⚠️ [TenantServer] Auto-analysis trigger failed:",
+            error,
+          )
+          // Don't fail the tenant creation if analysis fails
+        })
+      } catch (error) {
+        console.error(
+          "⚠️ [TenantServer] Failed to trigger auto-analysis:",
+          error,
+        )
+        // Don't fail the tenant creation if analysis trigger fails
+      }
+    }
 
     // Revalidate relevant paths
     revalidatePath("/dashboard")

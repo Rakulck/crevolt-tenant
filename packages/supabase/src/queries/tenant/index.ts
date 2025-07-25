@@ -8,16 +8,21 @@ export {
 
 // Client functions (data fetching)
 export {
+  getPropertyTenantRiskAnalysis,
   getPropertyTenants,
   getTenantById,
+  getUserPropertiesRiskSummary,
   getUserTenants,
   subscribeToPropertyTenants,
   subscribeToUserTenants,
 } from "./tenant-client"
 
-// Types
+// Types from tenant-server
 export type {
   CreateTenantData,
   Tenant,
   UpdateTenantData,
 } from "./tenant-server"
+
+// Types from tenant-client
+export type { PropertyRiskSummary, TenantRiskData } from "./tenant-client"
