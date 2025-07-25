@@ -125,8 +125,29 @@ export default function EditPropertyPage({
           throw new Error("Property not found")
         }
       } catch (error) {
-        console.error("Failed to load property:", error)
-        alert("Failed to load property. Redirecting to dashboard...")
+        console.error("🚨 [EditProperty] Failed to load property:", error)
+        console.error("🔍 [EditProperty] Property ID:", propertyId)
+        console.error("📊 [EditProperty] Error details:", {
+          name: error instanceof Error ? error.name : "Unknown",
+          message: error instanceof Error ? error.message : "Unknown error",
+          stack: error instanceof Error ? error.stack : "No stack trace",
+        })
+
+        // More specific error messages
+        let errorMessage = "Failed to load property"
+        if (error instanceof Error) {
+          if (error.message.includes("not found")) {
+            errorMessage = "Property not found or you don't have access to it"
+          } else if (error.message.includes("auth")) {
+            errorMessage = "Authentication error - please log in again"
+          } else {
+            errorMessage = `Error: ${error.message}`
+          }
+        }
+
+        alert(
+          `${errorMessage}. Check console for details. Redirecting to dashboard...`,
+        )
         router.push("/dashboard")
       } finally {
         setIsLoading(false)
@@ -250,7 +271,7 @@ export default function EditPropertyPage({
     }
   }
 
-  const getRiskColor = (risk: number) => {
+  const _getRiskColor = (risk: number) => {
     if (risk <= 10) return "text-green-600 bg-green-100"
     if (risk <= 20) return "text-yellow-600 bg-yellow-100"
     return "text-red-600 bg-red-100"

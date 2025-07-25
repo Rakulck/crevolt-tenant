@@ -12,23 +12,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-
-interface PropertyData {
-  id: string
-  name: string
-  address: string
-  totalUnits: number
-  occupiedUnits: number
-  averageRisk: number
-}
-
-interface TenantRiskData {
-  id: string
-  tenantName: string
-  unitNumber: string
-  softCreditPermission: boolean
-  defaultProbability: number
-}
+import {
+  getPropertyTenantRiskAnalysis,
+  type PropertyRiskSummary,
+  type TenantRiskData,
+} from "@/packages/supabase/src/queries/tenant"
 
 interface PropertyReportPageProps {
   propertyId: string
@@ -39,109 +27,172 @@ export default function PropertyReportPage({
 }: PropertyReportPageProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const [propertyData, setPropertyData] = useState<PropertyData>({
-    id: "",
-    name: "",
-    address: "",
-    totalUnits: 0,
-    occupiedUnits: 0,
-    averageRisk: 0,
-  })
-
-  const [tenantRiskData, _setTenantRiskData] = useState<TenantRiskData[]>([
-    {
-      id: "1",
-      tenantName: "Sarah Johnson",
-      unitNumber: "A-101",
-      softCreditPermission: true,
-      defaultProbability: 12.5,
-    },
-    {
-      id: "2",
-      tenantName: "Michael Chen",
-      unitNumber: "B-205",
-      softCreditPermission: false,
-      defaultProbability: 34.2,
-    },
-    {
-      id: "3",
-      tenantName: "Emily Rodriguez",
-      unitNumber: "C-312",
-      softCreditPermission: true,
-      defaultProbability: 8.7,
-    },
-    {
-      id: "4",
-      tenantName: "David Thompson",
-      unitNumber: "A-204",
-      softCreditPermission: true,
-      defaultProbability: 67.8,
-    },
-    {
-      id: "5",
-      tenantName: "Lisa Park",
-      unitNumber: "D-108",
-      softCreditPermission: false,
-      defaultProbability: 28.9,
-    },
-    {
-      id: "6",
-      tenantName: "Robert Wilson",
-      unitNumber: "B-301",
-      softCreditPermission: false,
-      defaultProbability: 72.1,
-    },
-    {
-      id: "7",
-      tenantName: "Amanda Foster",
-      unitNumber: "C-407",
-      softCreditPermission: true,
-      defaultProbability: 15.3,
-    },
-  ])
+  const [propertyData, setPropertyData] = useState<PropertyRiskSummary | null>(
+    null,
+  )
+  const [tenantRiskData, setTenantRiskData] = useState<TenantRiskData[]>([])
 
   useEffect(() => {
-    // Simulate loading property data
-    setTimeout(() => {
-      setPropertyData({
-        id: propertyId,
-        name: "Sunset Apartments Complex",
-        address: "1234 Sunset Blvd, Los Angeles, CA 90028",
-        totalUnits: 24,
-        occupiedUnits: 7,
-        averageRisk: 34.2,
-      })
-      setIsLoading(false)
-    }, 1000)
+    async function loadPropertyRiskData() {
+      try {
+        setIsLoading(true)
+        setError(null)
+
+        console.log(
+          "📊 [PropertyReport] Loading risk analysis data for property:",
+          propertyId,
+        )
+
+        const { summary, tenants } =
+          await getPropertyTenantRiskAnalysis(propertyId)
+
+        if (!summary) {
+          throw new Error("Property not found or no data available")
+        }
+
+        console.log("📊 [PropertyReport] Loaded data:", {
+          summary,
+          tenants: tenants.length,
+        })
+
+        setPropertyData(summary)
+        setTenantRiskData(tenants)
+      } catch (err) {
+        console.error("📊 [PropertyReport] Error loading data:", err)
+        setError(
+          err instanceof Error ? err.message : "Failed to load property data",
+        )
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    if (propertyId) {
+      loadPropertyRiskData()
+    }
   }, [propertyId])
 
-  const getRiskColor = (risk: number) => {
-    if (risk <= 15) return "text-green-600"
-    if (risk <= 35) return "text-orange-500"
-    return "text-red-600"
+  const getRiskColor = (probability: number) => {
+    if (probability >= 60) return "text-red-600"
+    if (probability >= 30) return "text-orange-500"
+    if (probability >= 15) return "text-yellow-600"
+    return "text-green-600"
   }
 
   const getPermissionColor = (hasPermission: boolean) => {
     return hasPermission ? "text-green-600" : "text-red-600"
   }
 
-  const handleDownloadReport = () => {
-    // In a real app, this would generate and download a PDF report
-    console.log("Downloading report for property:", propertyId)
-  }
-
-  const handleShareReport = () => {
-    // In a real app, this would open a share dialog
-    console.log("Sharing report for property:", propertyId)
+  const formatAddress = (address: string) => {
+    return address || "Address not available"
   }
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
-        <div className="text-center">
-          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-[#4F46E5]" />
-          <p className="text-slate-600">Loading property report...</p>
+      <div className="min-h-screen bg-slate-50 p-6">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-6 flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              onClick={() => router.push("/dashboard")}
+              className="text-slate-600 hover:text-slate-900"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Dashboard
+            </Button>
+          </div>
+
+          <div className="space-y-6">
+            {/* Loading skeleton */}
+            <Card className="shadow-lg">
+              <CardContent className="p-6">
+                <div className="animate-pulse">
+                  <div className="mb-4 h-8 rounded bg-slate-200" />
+                  <div className="mb-6 h-4 rounded bg-slate-200" />
+                  <div className="grid grid-cols-3 gap-6">
+                    <div className="h-20 rounded bg-slate-200" />
+                    <div className="h-20 rounded bg-slate-200" />
+                    <div className="h-20 rounded bg-slate-200" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-slate-50 p-6">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-6 flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              onClick={() => router.push("/dashboard")}
+              className="text-slate-600 hover:text-slate-900"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Dashboard
+            </Button>
+          </div>
+
+          <Card className="shadow-lg">
+            <CardContent className="p-6">
+              <div className="text-center">
+                <div className="mb-4 text-red-600">
+                  <FileText className="mx-auto h-12 w-12" />
+                </div>
+                <h3 className="mb-2 text-lg font-semibold text-slate-900">
+                  Unable to Load Property Report
+                </h3>
+                <p className="mb-4 text-slate-600">{error}</p>
+                <Button
+                  onClick={() => window.location.reload()}
+                  className="bg-[#4F46E5] text-white hover:bg-[#4338CA]"
+                >
+                  Try Again
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
+
+  if (!propertyData) {
+    return (
+      <div className="min-h-screen bg-slate-50 p-6">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-6 flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              onClick={() => router.push("/dashboard")}
+              className="text-slate-600 hover:text-slate-900"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Dashboard
+            </Button>
+          </div>
+
+          <Card className="shadow-lg">
+            <CardContent className="p-6">
+              <div className="text-center">
+                <Building2 className="mx-auto mb-4 h-12 w-12 text-slate-400" />
+                <h3 className="mb-2 text-lg font-semibold text-slate-900">
+                  No Data Available
+                </h3>
+                <p className="text-slate-600">
+                  No risk analysis data found for this property. Add tenants and
+                  run analysis to see the report.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     )
@@ -172,14 +223,20 @@ export default function PropertyReportPage({
           <div className="flex items-center space-x-2">
             <Button
               variant="outline"
-              onClick={handleShareReport}
+              onClick={() => {
+                // In a real app, this would open a share dialog
+                console.log("Sharing report for property:", propertyId)
+              }}
               className="bg-transparent"
             >
               <Share className="mr-2 h-4 w-4" />
               Share
             </Button>
             <Button
-              onClick={handleDownloadReport}
+              onClick={() => {
+                // In a real app, this would generate and download a PDF report
+                console.log("Downloading report for property:", propertyId)
+              }}
               className="bg-[#4F46E5] text-white hover:bg-[#4338CA]"
             >
               <Download className="mr-2 h-4 w-4" />
@@ -195,39 +252,35 @@ export default function PropertyReportPage({
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="text-2xl text-slate-900">
-              {propertyData.name}
+              {propertyData.property_name}
             </CardTitle>
             <CardDescription className="text-lg">
-              {propertyData.address}
+              {formatAddress(propertyData.property_address)}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               <div className="text-center">
                 <div className="text-3xl font-bold text-slate-900">
-                  {propertyData.occupiedUnits}
+                  {propertyData.occupied_units}
                 </div>
                 <div className="text-sm text-slate-600">Occupied Units</div>
                 <div className="text-xs text-slate-500">
-                  of {propertyData.totalUnits} total
+                  of {propertyData.total_units} total
                 </div>
               </div>
               <div className="text-center">
                 <div
-                  className={`text-3xl font-bold ${getRiskColor(propertyData.averageRisk)}`}
+                  className={`text-3xl font-bold ${getRiskColor(propertyData.average_risk)}`}
                 >
-                  {propertyData.averageRisk}%
+                  {propertyData.average_risk}%
                 </div>
                 <div className="text-sm text-slate-600">Average Risk</div>
                 <div className="text-xs text-slate-500">across all tenants</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-slate-900">
-                  {Math.round(
-                    (propertyData.occupiedUnits / propertyData.totalUnits) *
-                      100,
-                  )}
-                  %
+                  {propertyData.occupancy_rate}%
                 </div>
                 <div className="text-sm text-slate-600">Occupancy Rate</div>
                 <div className="text-xs text-slate-500">current occupancy</div>
@@ -265,18 +318,18 @@ export default function PropertyReportPage({
                 >
                   <div className="grid grid-cols-4 items-center gap-4">
                     <div className="font-medium text-slate-900">
-                      {tenant.tenantName}
+                      {tenant.tenant_name}
                     </div>
-                    <div className="text-slate-600">{tenant.unitNumber}</div>
+                    <div className="text-slate-600">{tenant.unit_number}</div>
                     <div
-                      className={`font-semibold ${getPermissionColor(tenant.softCreditPermission)}`}
+                      className={`font-semibold ${getPermissionColor(tenant.soft_credit_permission)}`}
                     >
-                      {tenant.softCreditPermission ? "YES" : "NO"}
+                      {tenant.soft_credit_permission ? "YES" : "NO"}
                     </div>
                     <div
-                      className={`text-lg font-bold ${getRiskColor(tenant.defaultProbability)}`}
+                      className={`text-lg font-bold ${getRiskColor(tenant.default_probability)}`}
                     >
-                      {tenant.defaultProbability}%
+                      {tenant.default_probability}%
                     </div>
                   </div>
                 </div>

@@ -2,15 +2,14 @@
 export {
   createProperty,
   deleteProperty,
-  getPropertyById,
   updateProperty,
   type Property,
-  type PropertyResult,
   type PropertyStats,
 } from "./property-server"
 
 // Client functions (data fetching)
 export {
+  getPropertyById,
   getPropertyStatsClient,
   getUserProperties,
   getUserPropertiesWithStats,
