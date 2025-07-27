@@ -1,8 +1,7 @@
 "use client"
 
-import type React from "react"
+import React, { Suspense } from "react"
 
-import { Suspense } from "react"
 import { ErrorBoundary } from "./error-boundary"
 
 interface SuspenseWrapperProps {
@@ -11,7 +10,11 @@ interface SuspenseWrapperProps {
   errorFallback?: React.ComponentType<{ error?: Error; reset: () => void }>
 }
 
-export function SuspenseWrapper({ children, fallback, errorFallback }: SuspenseWrapperProps) {
+export function SuspenseWrapper({
+  children,
+  fallback,
+  errorFallback,
+}: SuspenseWrapperProps) {
   return (
     <ErrorBoundary fallback={errorFallback}>
       <Suspense fallback={fallback}>{children}</Suspense>

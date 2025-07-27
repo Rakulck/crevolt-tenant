@@ -32,7 +32,8 @@ export function useGoogleMaps({
     }
 
     const script = document.createElement("script")
-    const librariesParam = libraries.length > 0 ? `&libraries=${libraries.join(",")}` : ""
+    const librariesParam =
+      libraries.length > 0 ? `&libraries=${libraries.join(",")}` : ""
     script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}${librariesParam}`
     script.async = true
     script.defer = true
@@ -51,7 +52,9 @@ export function useGoogleMaps({
 
     return () => {
       // Cleanup on unmount
-      const existingScript = document.querySelector('script[src*="maps.googleapis.com"]')
+      const existingScript = document.querySelector(
+        'script[src*="maps.googleapis.com"]',
+      )
       if (existingScript && existingScript.parentNode) {
         existingScript.parentNode.removeChild(existingScript)
       }

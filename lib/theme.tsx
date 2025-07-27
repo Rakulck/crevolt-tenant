@@ -1,7 +1,5 @@
 "use client"
 
-import type React from "react"
-
 import { createContext, useContext, useEffect, useState } from "react"
 
 type Theme = "light" | "dark" | "system"
@@ -54,7 +52,9 @@ export function ThemeProvider({
     let resolvedTheme: "light" | "dark"
 
     if (theme === "system") {
-      resolvedTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+      resolvedTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light"
     } else {
       resolvedTheme = theme
     }
@@ -87,7 +87,11 @@ export function ThemeProvider({
     return () => mediaQuery.removeEventListener("change", handleChange)
   }, [theme])
 
-  return <ThemeContext.Provider value={{ theme, setTheme, actualTheme }}>{children}</ThemeContext.Provider>
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme, actualTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  )
 }
 
 // Theme switching utilities
@@ -146,7 +150,9 @@ export function applyCustomTheme(themeName: keyof typeof customThemes) {
 }
 
 export function loadCustomTheme() {
-  const savedCustomTheme = localStorage.getItem("tenant-pro-custom-theme") as keyof typeof customThemes
+  const savedCustomTheme = localStorage.getItem(
+    "tenant-pro-custom-theme",
+  ) as keyof typeof customThemes
   if (savedCustomTheme && customThemes[savedCustomTheme]) {
     applyCustomTheme(savedCustomTheme)
   }
