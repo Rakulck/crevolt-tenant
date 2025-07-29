@@ -1,4 +1,8 @@
-export const TENANT_STEPS = ["Tenant Information Entry", "Lease Documents", "Verify & Submit"]
+export const TENANT_STEPS = [
+  "Tenant Information Entry",
+  "Lease Documents",
+  "Verify & Submit",
+]
 
 export const EMPLOYMENT_STATUS_OPTIONS = [
   { value: "full-time", label: "Full-time" },
@@ -33,4 +37,8 @@ export const PET_OWNERSHIP_OPTIONS = [
   { value: "service-animal", label: "Service Animal" },
 ]
 
-export const SUPPORTED_FILE_FORMATS = ["Excel files (.xlsx, .xls)", "CSV files (.csv)", "PDF files (.pdf)"]
+export const SUPPORTED_FILE_FORMATS = [
+  "Excel files (.xlsx, .xls)",
+  "CSV files (.csv)",
+  "PDF files (.pdf)",
+]

@@ -6,8 +6,15 @@ const config: Config = {
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "*.{js,ts,jsx,tsx,mdx}"
+    "./lib/**/*.{js,ts,jsx,tsx,mdx}",
+    "./hooks/**/*.{js,ts,jsx,tsx,mdx}",
+    "./utils/**/*.{js,ts,jsx,tsx,mdx}",
+    "./types/**/*.{js,ts,jsx,tsx,mdx}",
+    "./templates/**/*.{js,ts,jsx,tsx,mdx}",
+    "./constants/**/*.{js,ts,jsx,tsx,mdx}",
+    "*.{js,ts,jsx,tsx,mdx}",
   ],
+  prefix: "",
   theme: {
     container: {
       center: true,
@@ -23,22 +30,6 @@ const config: Config = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
         primary: {
           50: "rgb(var(--primary-50) / <alpha-value>)",
           100: "rgb(var(--primary-100) / <alpha-value>)",
@@ -51,7 +42,8 @@ const config: Config = {
           800: "rgb(var(--primary-800) / <alpha-value>)",
           900: "rgb(var(--primary-900) / <alpha-value>)",
           950: "rgb(var(--primary-950) / <alpha-value>)",
-          DEFAULT: "var(--primary-500)",
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
           50: "rgb(var(--secondary-50) / <alpha-value>)",
@@ -64,7 +56,28 @@ const config: Config = {
           700: "rgb(var(--secondary-700) / <alpha-value>)",
           800: "rgb(var(--secondary-800) / <alpha-value>)",
           900: "rgb(var(--secondary-900) / <alpha-value>)",
-          DEFAULT: "var(--secondary-500)",
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
         },
         success: {
           50: "var(--success-50)",
@@ -105,10 +118,6 @@ const config: Config = {
           900: "var(--error-900)",
           DEFAULT: "var(--error-500)",
         },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
       },
       spacing: {
         xs: "var(--spacing-xs)",
@@ -128,13 +137,34 @@ const config: Config = {
       },
       fontSize: {
         xs: ["var(--font-size-xs)", { lineHeight: "var(--line-height-tight)" }],
-        sm: ["var(--font-size-sm)", { lineHeight: "var(--line-height-normal)" }],
-        base: ["var(--font-size-base)", { lineHeight: "var(--line-height-normal)" }],
-        lg: ["var(--font-size-lg)", { lineHeight: "var(--line-height-normal)" }],
-        xl: ["var(--font-size-xl)", { lineHeight: "var(--line-height-normal)" }],
-        "2xl": ["var(--font-size-2xl)", { lineHeight: "var(--line-height-tight)" }],
-        "3xl": ["var(--font-size-3xl)", { lineHeight: "var(--line-height-tight)" }],
-        "4xl": ["var(--font-size-4xl)", { lineHeight: "var(--line-height-tight)" }],
+        sm: [
+          "var(--font-size-sm)",
+          { lineHeight: "var(--line-height-normal)" },
+        ],
+        base: [
+          "var(--font-size-base)",
+          { lineHeight: "var(--line-height-normal)" },
+        ],
+        lg: [
+          "var(--font-size-lg)",
+          { lineHeight: "var(--line-height-normal)" },
+        ],
+        xl: [
+          "var(--font-size-xl)",
+          { lineHeight: "var(--line-height-normal)" },
+        ],
+        "2xl": [
+          "var(--font-size-2xl)",
+          { lineHeight: "var(--line-height-tight)" },
+        ],
+        "3xl": [
+          "var(--font-size-3xl)",
+          { lineHeight: "var(--line-height-tight)" },
+        ],
+        "4xl": [
+          "var(--font-size-4xl)",
+          { lineHeight: "var(--line-height-tight)" },
+        ],
       },
       fontWeight: {
         normal: "var(--font-weight-normal)",
@@ -165,6 +195,14 @@ const config: Config = {
         brand: "0 4px 14px 0 rgba(79, 70, 229, 0.15)",
       },
       keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
         "fade-in": {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
@@ -177,21 +215,13 @@ const config: Config = {
           "0%": { opacity: "0", transform: "scale(0.95)" },
           "100%": { opacity: "1", transform: "scale(1)" },
         },
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
       },
       animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in var(--transition-normal) ease-in-out",
         "slide-up": "slide-up var(--transition-normal) ease-out",
         "scale-in": "scale-in var(--transition-fast) ease-out",
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
   },

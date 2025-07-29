@@ -16,6 +16,8 @@ export interface TenantData {
   petOwnership: string
   leaseAgreementFile?: File | null
   leaseAgreementUploaded?: boolean
+  leaseDocumentUrl?: string // URL to view uploaded lease document
+  leaseDocumentId?: string // Database ID of uploaded document
 }
 
 export interface TenantFormProps {

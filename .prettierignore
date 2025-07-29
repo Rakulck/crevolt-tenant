@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+.vercel/
+
+# Generated files
+*.generated.*
+*.d.ts.map
+*.js.map
+
+# Public assets
+public/
+
+# Environment files
+.env*
+
+# IDE and editor files
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Coverage
+coverage/
+
+# Temporary folders
+tmp/
+temp/
+
+# Documentation that shouldn't be formatted
+CHANGELOG.md
+LICENSE
+README.md
+
+# Config files with special formatting
+.gitignore
+.eslintignore 
