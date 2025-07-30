@@ -7,9 +7,22 @@ import {
   SheetClassificationSchema,
 } from "../types"
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+let _openai: OpenAI | null = null
+
+function getOpenAI(): OpenAI {
+  if (!_openai) {
+    const apiKey = process.env.OPENAI_API_KEY
+    if (!apiKey) {
+      throw new Error(
+        "OPENAI_API_KEY environment variable is missing or empty. Please set it in your environment variables."
+      )
+    }
+    _openai = new OpenAI({
+      apiKey: apiKey,
+    })
+  }
+  return _openai
+}
 
 export async function analyzeHeaders(
   sheetData: unknown[][],
@@ -54,7 +67,7 @@ Look for these field variations:
 Return column letters (A, B, C, etc.) and row numbers (1-based).`
 
   try {
-    const completion = await openai.chat.completions.parse({
+    const completion = await getOpenAI().chat.completions.parse({
       model: "gpt-4.1-nano-2025-04-14",
       messages: [
         {
@@ -112,7 +125,7 @@ If it's a rent roll, try to extract the property name from the sheet name or dat
 Provide confidence score (0-1).`
 
   try {
-    const completion = await openai.chat.completions.parse({
+    const completion = await getOpenAI().chat.completions.parse({
       model: "gpt-4.1-nano-2025-04-14",
       messages: [
         {

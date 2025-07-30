@@ -6,9 +6,22 @@ import type { DocumentAnalysisResult, DocumentFile } from "@/types/documents"
 import { BaseDocumentAnalyzer } from "@/types/documents/analyzers/base"
 
 export class RentRollAnalyzer extends BaseDocumentAnalyzer {
-  private static openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  })
+  private static _openai: OpenAI | null = null
+
+  private static getOpenAI(): OpenAI {
+    if (!this._openai) {
+      const apiKey = process.env.OPENAI_API_KEY
+      if (!apiKey) {
+        throw new Error(
+          "OPENAI_API_KEY environment variable is missing or empty. Please set it in your environment variables."
+        )
+      }
+      this._openai = new OpenAI({
+        apiKey: apiKey,
+      })
+    }
+    return this._openai
+  }
 
   getSupportedDocumentType(): string {
     return "rent_roll"
@@ -103,10 +116,10 @@ export class RentRollAnalyzer extends BaseDocumentAnalyzer {
       const dataPreview = relevantSheet.data
         .slice(0, 20)
         .map((row) => row.slice(0, 10).join("\t"))
-        .join("\n")
+                .join("\n")
 
-      const completion = await RentRollAnalyzer.openai.chat.completions.create({
-        model: "gpt-4o-mini",
+    const completion = await RentRollAnalyzer.getOpenAI().chat.completions.create({
+      model: "gpt-4o-mini",
         messages: [
           {
             role: "system",
@@ -139,10 +152,10 @@ export class RentRollAnalyzer extends BaseDocumentAnalyzer {
     extractedData: Record<string, unknown>
   }> {
     try {
-      const base64File = await this.convertFileToBase64(document.file)
+          const base64File = await this.convertFileToBase64(document.file)
 
-      const completion = await RentRollAnalyzer.openai.chat.completions.create({
-        model: "gpt-4o",
+    const completion = await RentRollAnalyzer.getOpenAI().chat.completions.create({
+      model: "gpt-4o",
         messages: [
           {
             role: "system",

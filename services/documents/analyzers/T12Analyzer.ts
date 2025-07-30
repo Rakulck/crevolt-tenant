@@ -7,9 +7,22 @@ import { Effect } from "effect"
 import OpenAI from "openai"
 
 export class T12Analyzer extends BaseDocumentAnalyzer {
-  private static openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  })
+  private static _openai: OpenAI | null = null
+
+  private static getOpenAI(): OpenAI {
+    if (!this._openai) {
+      const apiKey = process.env.OPENAI_API_KEY
+      if (!apiKey) {
+        throw new Error(
+          "OPENAI_API_KEY environment variable is missing or empty. Please set it in your environment variables."
+        )
+      }
+      this._openai = new OpenAI({
+        apiKey: apiKey,
+      })
+    }
+    return this._openai
+  }
 
   getSupportedDocumentType(): string {
     return "t12"
@@ -69,7 +82,7 @@ export class T12Analyzer extends BaseDocumentAnalyzer {
     try {
       const base64File = await this.convertFileToBase64(document.file)
 
-      const completion = await T12Analyzer.openai.chat.completions.create({
+      const completion = await T12Analyzer.getOpenAI().chat.completions.create({
         model: "gpt-4o",
         messages: [
           {

@@ -14,9 +14,22 @@ interface AnalysisTemplate {
 }
 
 export class GenericDocumentAnalyzer extends BaseDocumentAnalyzer {
-  private static openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  })
+  private static _openai: OpenAI | null = null
+
+  private static getOpenAI(): OpenAI {
+    if (!this._openai) {
+      const apiKey = process.env.OPENAI_API_KEY
+      if (!apiKey) {
+        throw new Error(
+          "OPENAI_API_KEY environment variable is missing or empty. Please set it in your environment variables."
+        )
+      }
+      this._openai = new OpenAI({
+        apiKey: apiKey,
+      })
+    }
+    return this._openai
+  }
 
   private documentType: DocumentType
 
@@ -88,7 +101,7 @@ export class GenericDocumentAnalyzer extends BaseDocumentAnalyzer {
       const base64File = await this.convertFileToBase64(document.file)
 
       const completion =
-        await GenericDocumentAnalyzer.openai.chat.completions.create({
+        await GenericDocumentAnalyzer.getOpenAI().chat.completions.create({
           model: "gpt-4o",
           messages: [
             {

@@ -83,9 +83,22 @@ type TenantDefaultAnalysisResponse = z.infer<
 >
 
 export class TenantDefaultAnalyzer extends BaseDocumentAnalyzer {
-  private static openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  })
+  private static _openai: OpenAI | null = null
+
+  private static getOpenAI(): OpenAI {
+    if (!this._openai) {
+      const apiKey = process.env.OPENAI_API_KEY
+      if (!apiKey) {
+        throw new Error(
+          "OPENAI_API_KEY environment variable is missing or empty. Please set it in your environment variables."
+        )
+      }
+      this._openai = new OpenAI({
+        apiKey: apiKey,
+      })
+    }
+    return this._openai
+  }
 
   getSupportedDocumentType(): string {
     return "rent_roll"
@@ -310,7 +323,7 @@ export class TenantDefaultAnalyzer extends BaseDocumentAnalyzer {
 
     try {
       const searchCompletion =
-        await TenantDefaultAnalyzer.openai.chat.completions.parse({
+        await TenantDefaultAnalyzer.getOpenAI().chat.completions.parse({
           model: "gpt-4o-search-preview",
           messages: [
             {
@@ -389,7 +402,7 @@ Focus on data from the last 3 months that could impact tenant ability to pay ren
     )
 
     const completion =
-      await TenantDefaultAnalyzer.openai.chat.completions.parse({
+              await TenantDefaultAnalyzer.getOpenAI().chat.completions.parse({
         model: "gpt-4o",
         messages: [
           {

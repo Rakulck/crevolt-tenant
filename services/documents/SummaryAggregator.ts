@@ -10,13 +10,26 @@ interface DocumentData {
 }
 
 export const SummaryAggregator = {
-  openai: new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  }),
+  _openai: null as OpenAI | null,
+
+  getOpenAI(): OpenAI {
+    if (!this._openai) {
+      const apiKey = process.env.OPENAI_API_KEY
+      if (!apiKey) {
+        throw new Error(
+          "OPENAI_API_KEY environment variable is missing or empty. Please set it in your environment variables."
+        )
+      }
+      this._openai = new OpenAI({
+        apiKey: apiKey,
+      })
+    }
+    return this._openai
+  },
 
   async generateSummary(data: DocumentData): Promise<string> {
     try {
-      const completion = await SummaryAggregator.openai.chat.completions.create(
+      const completion = await SummaryAggregator.getOpenAI().chat.completions.create(
         {
           model: "gpt-4o-mini",
           messages: [
