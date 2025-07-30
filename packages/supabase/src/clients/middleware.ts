@@ -11,9 +11,9 @@ export const updateSession = async (
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!supabaseUrl || !supabaseKey) {
-    throw new Error(
-      "Supabase configuration missing. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.",
-    )
+    console.warn("Supabase environment variables not available in middleware.")
+    // Return the initial response without authentication
+    return { response: initialResponse, user: null }
   }
 
   let response = initialResponse

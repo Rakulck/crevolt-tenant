@@ -18,11 +18,21 @@ export function useAuth(): AuthState {
   const supabase = createClient()
 
   useEffect(() => {
+    // Check if supabase client is available (might be null during build)
+    if (!supabase) {
+      setLoading(false)
+      return
+    }
+
     // Get initial session
     supabase.auth
       .getSession()
       .then(({ data: { session } }: { data: { session: Session | null } }) => {
         setUser(session?.user ?? null)
+        setLoading(false)
+      })
+      .catch((error) => {
+        console.error("Failed to get session:", error)
         setLoading(false)
       })
 
@@ -37,11 +47,21 @@ export function useAuth(): AuthState {
     )
 
     return () => subscription.unsubscribe()
-  }, [supabase.auth])
+  }, [supabase])
 
   const signOut = async () => {
-    await supabase.auth.signOut()
-    window.location.href = "/auth"
+    if (!supabase) {
+      window.location.href = "/auth"
+      return
+    }
+    
+    try {
+      await supabase.auth.signOut()
+      window.location.href = "/auth"
+    } catch (error) {
+      console.error("Failed to sign out:", error)
+      window.location.href = "/auth"
+    }
   }
 
   return {
