@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod"
 
 export const DocumentType = z.enum([
   "rent_roll",
@@ -8,9 +8,9 @@ export const DocumentType = z.enum([
   "floor_plans",
   "ground_lease",
   "lease_trade_out_report",
-]);
+])
 
-export type DocumentType = z.infer<typeof DocumentType>;
+export type DocumentType = z.infer<typeof DocumentType>
 
 export const DocumentFileSchema = z.object({
   id: z.string(),
@@ -19,9 +19,9 @@ export const DocumentFileSchema = z.object({
   file: z.instanceof(File),
   size: z.number(),
   uploadedAt: z.date().default(() => new Date()),
-});
+})
 
-export type DocumentFile = z.infer<typeof DocumentFileSchema>;
+export type DocumentFile = z.infer<typeof DocumentFileSchema>
 
 export const DocumentAnalysisResultSchema = z.object({
   documentId: z.string(),
@@ -32,9 +32,11 @@ export const DocumentAnalysisResultSchema = z.object({
   error: z.string().optional(),
   processingTimeMs: z.number(),
   analysisTimestamp: z.date(),
-});
+})
 
-export type DocumentAnalysisResult = z.infer<typeof DocumentAnalysisResultSchema>;
+export type DocumentAnalysisResult = z.infer<
+  typeof DocumentAnalysisResultSchema
+>
 
 export const RentRollSummarySchema = z.object({
   totalUnits: z.number().optional(),
@@ -42,7 +44,7 @@ export const RentRollSummarySchema = z.object({
   totalRent: z.number().optional(),
   averageRent: z.number().optional(),
   keyFindings: z.array(z.string()).default([]),
-});
+})
 
 export const T12SummarySchema = z.object({
   netOperatingIncome: z.number().optional(),
@@ -50,7 +52,7 @@ export const T12SummarySchema = z.object({
   expenses: z.number().optional(),
   capRate: z.number().optional(),
   keyMetrics: z.array(z.string()).default([]),
-});
+})
 
 export const UnderwrittenFileSummarySchema = z.object({
   projectedIRR: z.number().optional(),
@@ -58,35 +60,35 @@ export const UnderwrittenFileSummarySchema = z.object({
   equityMultiple: z.number().optional(),
   holdPeriod: z.number().optional(),
   keyAssumptions: z.array(z.string()).default([]),
-});
+})
 
 export const ConcessionsReportSummarySchema = z.object({
   totalConcessions: z.number().optional(),
   averageConcessionPerUnit: z.number().optional(),
   mostCommonConcessions: z.array(z.string()).default([]),
   impactOnRent: z.number().optional(),
-});
+})
 
 export const FloorPlansSummarySchema = z.object({
   unitTypes: z.array(z.string()).default([]),
   averageSquareFootage: z.number().optional(),
   bedroomDistribution: z.record(z.number()).optional(),
   amenityHighlights: z.array(z.string()).default([]),
-});
+})
 
 export const GroundLeaseSummarySchema = z.object({
   leaseTermYears: z.number().optional(),
   annualRent: z.number().optional(),
   escalations: z.string().optional(),
   keyTerms: z.array(z.string()).default([]),
-});
+})
 
 export const LeaseTradeOutSummarySchema = z.object({
   unitsTraded: z.number().optional(),
   averageRentIncrease: z.number().optional(),
   retentionRate: z.number().optional(),
   marketTrends: z.array(z.string()).default([]),
-});
+})
 
 export const DocumentSummarySchema = z.discriminatedUnion("documentType", [
   z.object({
@@ -114,9 +116,9 @@ export const DocumentSummarySchema = z.discriminatedUnion("documentType", [
     documentType: z.literal("lease_trade_out_report"),
     data: LeaseTradeOutSummarySchema,
   }),
-]);
+])
 
-export type DocumentSummary = z.infer<typeof DocumentSummarySchema>;
+export type DocumentSummary = z.infer<typeof DocumentSummarySchema>
 
 export const DocumentProcessingRequestSchema = z.object({
   dealId: z.string(),
@@ -130,9 +132,11 @@ export const DocumentProcessingRequestSchema = z.object({
     maximumInvestment: z.number().optional(),
     fundingDeadline: z.string().optional(),
   }),
-});
+})
 
-export type DocumentProcessingRequest = z.infer<typeof DocumentProcessingRequestSchema>;
+export type DocumentProcessingRequest = z.infer<
+  typeof DocumentProcessingRequestSchema
+>
 
 export const DocumentProcessingResponseSchema = z.object({
   success: z.boolean(),
@@ -142,6 +146,8 @@ export const DocumentProcessingResponseSchema = z.object({
   finalDescription: z.string().optional(),
   error: z.string().optional(),
   totalProcessingTimeMs: z.number(),
-});
+})
 
-export type DocumentProcessingResponse = z.infer<typeof DocumentProcessingResponseSchema>;
+export type DocumentProcessingResponse = z.infer<
+  typeof DocumentProcessingResponseSchema
+>

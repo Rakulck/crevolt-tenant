@@ -1,9 +1,14 @@
-import { z } from "zod";
-import type { DocumentType } from "./documents";
+import { z } from "zod"
+import type { DocumentType } from "./documents"
 
-export const ProgressStatus = z.enum(["pending", "processing", "completed", "failed"]);
+export const ProgressStatus = z.enum([
+  "pending",
+  "processing",
+  "completed",
+  "failed",
+])
 
-export type ProgressStatus = z.infer<typeof ProgressStatus>;
+export type ProgressStatus = z.infer<typeof ProgressStatus>
 
 export const ProgressStage = z.enum([
   "initializing",
@@ -19,9 +24,9 @@ export const ProgressStage = z.enum([
   "generating_description",
   "completed",
   "failed",
-]);
+])
 
-export type ProgressStage = z.infer<typeof ProgressStage>;
+export type ProgressStage = z.infer<typeof ProgressStage>
 
 export const DocumentProgressSchema = z.object({
   documentId: z.string(),
@@ -32,9 +37,9 @@ export const DocumentProgressSchema = z.object({
   endTime: z.date().optional(),
   error: z.string().optional(),
   progress: z.number().min(0).max(100).default(0),
-});
+})
 
-export type DocumentProgress = z.infer<typeof DocumentProgressSchema>;
+export type DocumentProgress = z.infer<typeof DocumentProgressSchema>
 
 export const OverallProgressSchema = z.object({
   sessionId: z.string(),
@@ -47,12 +52,18 @@ export const OverallProgressSchema = z.object({
   endTime: z.date().optional(),
   estimatedTimeRemaining: z.number().optional(),
   error: z.string().optional(),
-});
+})
 
-export type OverallProgress = z.infer<typeof OverallProgressSchema>;
+export type OverallProgress = z.infer<typeof OverallProgressSchema>
 
 export const ProgressEventSchema = z.object({
-  type: z.enum(["progress", "document_complete", "stage_change", "error", "complete"]),
+  type: z.enum([
+    "progress",
+    "document_complete",
+    "stage_change",
+    "error",
+    "complete",
+  ]),
   sessionId: z.string(),
   timestamp: z.date(),
   data: z.union([
@@ -61,9 +72,9 @@ export const ProgressEventSchema = z.object({
     z.object({ error: z.string() }),
     z.object({ finalResult: z.unknown() }),
   ]),
-});
+})
 
-export type ProgressEvent = z.infer<typeof ProgressEventSchema>;
+export type ProgressEvent = z.infer<typeof ProgressEventSchema>
 
 export const STAGE_MESSAGES: Record<ProgressStage, string> = {
   initializing: "Initializing document processing...",
@@ -79,7 +90,7 @@ export const STAGE_MESSAGES: Record<ProgressStage, string> = {
   generating_description: "Generating deal description...",
   completed: "Process completed successfully!",
   failed: "Processing failed",
-};
+}
 
 export const DOCUMENT_TYPE_TO_STAGE: Record<DocumentType, ProgressStage> = {
   rent_roll: "processing_rent_roll",
@@ -89,4 +100,4 @@ export const DOCUMENT_TYPE_TO_STAGE: Record<DocumentType, ProgressStage> = {
   floor_plans: "processing_floor_plans",
   ground_lease: "processing_ground_lease",
   lease_trade_out_report: "processing_lease_trade_out_report",
-};
+}

@@ -1,30 +1,33 @@
-import OpenAI from "openai";
-import { zodResponseFormat } from "openai/helpers/zod";
+import OpenAI from "openai"
+import { zodResponseFormat } from "openai/helpers/zod"
 import {
   type HeaderAnalysisResult,
   HeaderAnalysisSchema,
   type SheetClassificationResult,
   SheetClassificationSchema,
-} from "../types";
+} from "../types"
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-});
+})
 
 export async function analyzeHeaders(
   sheetData: unknown[][],
   maxRows = 100,
 ): Promise<HeaderAnalysisResult> {
-  const analysisData = sheetData.slice(0, maxRows);
+  const analysisData = sheetData.slice(0, maxRows)
 
   const formattedData = analysisData
     .map(
       (row, index) =>
         `Row ${index + 1}: ${row
-          .map((cell, colIndex) => `${String.fromCharCode(65 + colIndex)}="${cell || ""}"`)
+          .map(
+            (cell, colIndex) =>
+              `${String.fromCharCode(65 + colIndex)}="${cell || ""}"`,
+          )
           .join(", ")}`,
     )
-    .join("\n");
+    .join("\n")
 
   const prompt = `Analyze this spreadsheet data to identify rent roll headers and determine where data extraction should begin.
 
@@ -48,7 +51,7 @@ Look for these field variations:
 - market_rent: "Market Rent", "Market Rate", "Market + Addl", "Market", "Asking Rent"
 - tenant_name: "Name", "Tenant", "Resident", "Tenant Name", "Lessee"
 
-Return column letters (A, B, C, etc.) and row numbers (1-based).`;
+Return column letters (A, B, C, etc.) and row numbers (1-based).`
 
   try {
     const completion = await openai.chat.completions.parse({
@@ -64,20 +67,23 @@ Return column letters (A, B, C, etc.) and row numbers (1-based).`;
           content: prompt,
         },
       ],
-      response_format: zodResponseFormat(HeaderAnalysisSchema, "headerAnalysis"),
-    });
+      response_format: zodResponseFormat(
+        HeaderAnalysisSchema,
+        "headerAnalysis",
+      ),
+    })
 
-    const result = completion.choices[0]?.message.parsed;
+    const result = completion.choices[0]?.message.parsed
     if (!result) {
-      throw new Error("Failed to parse AI response");
+      throw new Error("Failed to parse AI response")
     }
 
-    return result;
+    return result
   } catch (error) {
-    console.error("AI header analysis failed:", error);
+    console.error("AI header analysis failed:", error)
     throw new Error(
       `AI analysis failed: ${error instanceof Error ? error.message : "Unknown error"}`,
-    );
+    )
   }
 }
 
@@ -89,7 +95,7 @@ export async function classifySheet(
   const sampleData = firstRows
     .slice(0, maxRows)
     .map((row, index) => `Row ${index + 1}: ${row.join(", ")}`)
-    .join("\n");
+    .join("\n")
 
   const prompt = `Analyze this spreadsheet data to classify the sheet type.
 
@@ -103,7 +109,7 @@ Classify as:
 - "unknown": Cannot determine or doesn't fit above categories
 
 If it's a rent roll, try to extract the property name from the sheet name or data.
-Provide confidence score (0-1).`;
+Provide confidence score (0-1).`
 
   try {
     const completion = await openai.chat.completions.parse({
@@ -119,17 +125,20 @@ Provide confidence score (0-1).`;
           content: prompt,
         },
       ],
-      response_format: zodResponseFormat(SheetClassificationSchema, "sheetClassification"),
-    });
+      response_format: zodResponseFormat(
+        SheetClassificationSchema,
+        "sheetClassification",
+      ),
+    })
 
-    const result = completion.choices[0]?.message.parsed;
+    const result = completion.choices[0]?.message.parsed
     if (!result) {
-      throw new Error("Failed to parse AI response");
+      throw new Error("Failed to parse AI response")
     }
 
-    return result;
+    return result
   } catch (error) {
-    console.error("Sheet classification failed:", error);
-    return { type: "unknown", confidence: 0, propertyName: null };
+    console.error("Sheet classification failed:", error)
+    return { type: "unknown", confidence: 0, propertyName: null }
   }
 }
