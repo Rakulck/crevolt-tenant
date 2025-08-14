@@ -4,6 +4,9 @@ import { cn } from "@/lib/utils"
 
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
   ({ className, type, ...props }, ref) => {
+    // suppressHydrationWarning is used to prevent hydration mismatches
+    // caused by browser extensions (password managers, form fillers) that
+    // add attributes like fdprocessedid to form inputs
     return (
       <input
         type={type}
@@ -12,6 +15,7 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
           className,
         )}
         ref={ref}
+        suppressHydrationWarning={true}
         {...props}
       />
     )

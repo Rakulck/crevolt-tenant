@@ -1,6 +1,8 @@
 "use client"
 
 import { Suspense, useEffect, useState } from "react"
+import { FileText } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 import {
   getUserPropertiesWithStats,
@@ -13,8 +15,10 @@ import { DashboardStats } from "../../../components/dashboard-stats"
 import { ErrorBoundary } from "../../../components/error-boundary"
 import { SectionLoading } from "../../../components/loading/section-loading"
 import { PropertyCard } from "../../../components/property-card"
+import { Button } from "../../../components/ui/button"
 
 export default function Dashboard() {
+  const router = useRouter()
   const [properties, setProperties] = useState<Property[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -73,7 +77,17 @@ export default function Dashboard() {
 
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-slate-900">Your Properties</h2>
-          <AddPropertyButton />
+          <div className="flex items-center space-x-3">
+            <Button
+              variant="outline"
+              onClick={() => router.push('/dashboard/rent-roll-parser')}
+              className="flex items-center space-x-2"
+            >
+              <FileText className="h-4 w-4" />
+              <span>Rent Roll Parser</span>
+            </Button>
+            <AddPropertyButton />
+          </div>
         </div>
 
         <ErrorBoundary>

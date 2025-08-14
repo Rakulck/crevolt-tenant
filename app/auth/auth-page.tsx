@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 
 import { Building2, Eye, EyeOff, Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
@@ -30,6 +30,27 @@ interface FormErrors {
   company_name?: string
   phone?: string
   general?: string
+}
+
+// Client-side only form wrapper to prevent hydration mismatches
+function ClientFormWrapper({ children }: { children: React.ReactNode }) {
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  if (!isClient) {
+    return (
+      <div className="space-y-4">
+        <div className="h-10 w-full animate-pulse rounded-md bg-gray-200" />
+        <div className="h-10 w-full animate-pulse rounded-md bg-gray-200" />
+        <div className="h-10 w-full animate-pulse rounded-md bg-gray-200" />
+      </div>
+    )
+  }
+
+  return <>{children}</>
 }
 
 export default function AuthPage() {
@@ -297,7 +318,8 @@ export default function AuthPage() {
                     <p className="text-sm text-red-600">{errors.general}</p>
                   </div>
                 )}
-                <form className="space-y-4" onSubmit={handleLogin}>
+                <ClientFormWrapper>
+                  <form className="space-y-4" onSubmit={handleLogin}>
                   <div className="space-y-2">
                     <Label htmlFor="login-email">Email Address</Label>
                     <Input
@@ -386,7 +408,8 @@ export default function AuthPage() {
                       "Sign In"
                     )}
                   </Button>
-                </form>
+                  </form>
+                </ClientFormWrapper>
               </TabsContent>
 
               <TabsContent value="signup" className="space-y-4">
@@ -395,7 +418,8 @@ export default function AuthPage() {
                     <p className="text-sm text-red-600">{errors.general}</p>
                   </div>
                 )}
-                <form className="space-y-4" onSubmit={handleSignup}>
+                <ClientFormWrapper>
+                  <form className="space-y-4" onSubmit={handleSignup}>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="first-name">First Name</Label>
@@ -565,7 +589,8 @@ export default function AuthPage() {
                       "Create Account"
                     )}
                   </Button>
-                </form>
+                  </form>
+                </ClientFormWrapper>
               </TabsContent>
             </Tabs>
           </CardContent>
