@@ -303,7 +303,7 @@ export default function AuthPage() {
                     <Input
                       id="login-email"
                       type="email"
-                      placeholder="john@company.com"
+                      placeholder="Email address"
                       value={loginForm.email}
                       onChange={(e) =>
                         setLoginForm((prev) => ({
@@ -322,7 +322,7 @@ export default function AuthPage() {
                       <Input
                         id="login-password"
                         type={showPassword ? "text" : "password"}
-                        placeholder="Enter your password"
+                        placeholder="Password"
                         value={loginForm.password}
                         onChange={(e) =>
                           setLoginForm((prev) => ({
@@ -401,7 +401,7 @@ export default function AuthPage() {
                       <Label htmlFor="first-name">First Name</Label>
                       <Input
                         id="first-name"
-                        placeholder="John"
+                        placeholder="First name"
                         value={signupForm.firstName}
                         onChange={(e) =>
                           setSignupForm((prev) => ({
@@ -417,7 +417,7 @@ export default function AuthPage() {
                       <Label htmlFor="last-name">Last Name</Label>
                       <Input
                         id="last-name"
-                        placeholder="Doe"
+                        placeholder="Last name"
                         value={signupForm.lastName}
                         onChange={(e) =>
                           setSignupForm((prev) => ({
@@ -453,7 +453,7 @@ export default function AuthPage() {
                     <Input
                       id="phone"
                       type="tel"
-                      placeholder="+1 (555) 123-4567"
+                      placeholder="Phone number"
                       value={signupForm.phone}
                       onChange={(e) =>
                         setSignupForm((prev) => ({
@@ -467,7 +467,7 @@ export default function AuthPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email Address</Label>
+                    <Label htmlFor="signup-email">Business Email Address</Label>
                     <Input
                       id="signup-email"
                       type="email"
@@ -490,7 +490,7 @@ export default function AuthPage() {
                       <Input
                         id="signup-password"
                         type={showSignupPassword ? "text" : "password"}
-                        placeholder="Create a strong password"
+                        placeholder="Password"
                         value={signupForm.password}
                         onChange={(e) =>
                           setSignupForm((prev) => ({
