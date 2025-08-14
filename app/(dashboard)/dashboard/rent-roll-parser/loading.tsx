@@ -1,5 +1,5 @@
-import { SectionLoading } from "@/components/loading/section-loading"
+import { SectionLoading } from "../../../../components/loading/section-loading"
 
-export default function Loading() {
-  return <SectionLoading message="Loading rent roll parser..." />
+export default function RentRollParserLoading() {
+  return <SectionLoading message="Loading Rent Roll Parser..." />
 }

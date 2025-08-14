@@ -1,12 +1,16 @@
-import { Suspense } from "react"
+"use client"
 
-import { RentRollParserPage } from "./rent-roll-parser-page"
-import { SectionLoading } from "@/components/loading/section-loading"
+import { ProtectedRoute } from "../../../../components/protected-route"
+
+import RentRollParserPage from "./rent-roll-parser-page"
+
+// Prevent static generation for this page since it requires authentication
+export const dynamic = 'force-dynamic'
 
 export default function RentRollParser() {
   return (
-    <Suspense fallback={<SectionLoading message="Loading rent roll parser..." />}>
+    <ProtectedRoute>
       <RentRollParserPage />
-    </Suspense>
+    </ProtectedRoute>
   )
 }

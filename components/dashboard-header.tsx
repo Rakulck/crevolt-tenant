@@ -14,6 +14,8 @@ import {
 
 import { useAuth } from "../hooks/use-auth"
 
+import { RentRollParserButton } from "./rent-roll-parser-button"
+
 export function DashboardHeader() {
   const router = useRouter()
   const { user: _user, signOut } = useAuth()
@@ -35,6 +37,7 @@ export function DashboardHeader() {
         </div>
 
         <div className="flex items-center space-x-3">
+          <RentRollParserButton />
           <Button
             className="bg-[#4F46E5] text-white hover:bg-[#4338CA]"
             onClick={() => router.push("/dashboard/lease-templates")}
